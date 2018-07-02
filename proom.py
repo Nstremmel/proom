@@ -58,8 +58,10 @@ def formatfromk(amount):
 			return '{0:.4g}'.format(amount*0.000001)+"B"
 		else:
 			return '{0:.5g}'.format(amount*0.000001)+"B"
-	elif amount>=10000:
-		if len(str(amount))==5:
+	elif amount>=1000:
+		if len(str(amount))==4:
+			return '{0:.3g}'.format(amount*0.001)+"M"
+		elif len(str(amount))==5:
 			return '{0:.4g}'.format(amount*0.001)+"M"
 		elif len(str(amount))==6:
 			return '{0:.5g}'.format(amount*0.001)+"M"
@@ -331,6 +333,7 @@ async def on_message(message):
 				sheet.update_cell(2, 3, str(datetime.datetime.now())[:-7])
 				sheet.update_cell(counter+2, 4, "No")
 				await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". P Room will message you soon to collect your donation.")
+				break
 			else:
 				counter+=1
 		#except:

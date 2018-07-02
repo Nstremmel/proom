@@ -4,14 +4,18 @@ import random
 from time import sleep
 import datetime
 import os
-import pandas
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
 from discord.utils import get
 
 emojipath = 'proom.csv'
 client = discord.Client()
 
 
-
+scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+client1 = gspread.authorize(creds)
+sheet = client1.open("Points System").sheet1
 
 # import psycopg2
 # DATABASE_URL = os.environ['postgres://rbcuezaukicjrw:a4f881eb70b24835e7244c57842f479d569d7dd0ad51209b823620ff31057e3a@ec2-50-16-196-238.compute-1.amazonaws.com:5432/d2tedbh2aiu1ov']
@@ -26,12 +30,41 @@ def reset():
 	blank=[]
 	wrong=[]
 	word1="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs"
+
 def isstaff(checkedid):
 	for i in open("staff.txt"):
-		if i.rstrip()==checkedid:
+		if str(i.split(" ")[0])==str(checkedid):
 			return "verified"
+
+def formatok(amount):
+	#takes amount as string from message.content
+	#returns an integer in K
+	if (amount[-1:]).lower()=="m":
+		return int(float(str(amount[:-1]))*1000)
+	elif (amount[-1:]).lower()=="k":
+		return int(str(amount[:-1]))
+	elif (amount[-1:]).lower()=="b":
+		return int(float(str(amount[:-1]))*1000000)
+	else:
+		return int(float(amount)*1000)
+
+def formatfromk(amount):
+	#takes amount as integer in K
+	#returns a string to be printed
+	if amount>=1000000:
+		if len(str(amount))==7:
+			return '{0:.3g}'.format(amount*0.000001)+"B"
+		elif len(str(amount))==8:
+			return '{0:.4g}'.format(amount*0.000001)+"B"
 		else:
-			return "no"
+			return '{0:.5g}'.format(amount*0.000001)+"B"
+	elif amount>=10000:
+		if len(str(amount))==5:
+			return '{0:.4g}'.format(amount*0.001)+"M"
+		elif len(str(amount))==6:
+			return '{0:.5g}'.format(amount*0.001)+"M"
+	else:
+		return str(amount)+"k"
 ######################################################################################
 
 #Predefined Variables
@@ -43,18 +76,6 @@ raffle=[]
 daily={}
 giveaway=[]
 bananamode=False
-
-
-
-
-
-#fixed !skipword
-#can now input words as upercase
-#nicer code wtih picking words from words.csv
-#spam prevention - 3 seconds
-
-
-
 
 
 
@@ -88,26 +109,15 @@ async def on_reaction_add(reaction, user):
 
 @client.event
 async def on_message(message):
-	global words,objects,word,guesses,solved,blank,wrong,word1,raffle,daily,bananamode
+	global words,objects,word,guesses,solved,blank,wrong,word1,bananamode
+
 	if bananamode==True:
 		emoji = get(client.get_all_emojis(), name='jad')
 		await client.add_reaction(message, emoji)
+
 	if message.channel not in (client.get_server("417404138578772008").channels):
 		print(str(message.content)+"\n"+str(message.author))
-	else:
-		if str(message.author) not in daily:
-			staff=False
-			for i in open("staff.txt"):
-				if str(message.author.id)==i.rstrip():
-					staff=True
-			if staff==False:
-				daily[str(message.author)]=1
-		else:
-			daily[str(message.author)]+=1
-			if str(message.author) not in raffle:
-				if daily[str(message.author)]>=5:
-					raffle.append(str(message.author))
-	#############################################
+
 	#############################################
 	if message.content.startswith("!input"):
 		print(message.content)
@@ -117,12 +127,19 @@ async def on_message(message):
 			await client.send_message(message.channel, "Goodbye!")
 			await client.logout()
 	##########################################
-	elif message.content.startswith("!send commands"):
-		await client.send_message(message.author, "```css\n!colorpicker						  -Gives a link to a random color\n!throw (anything you want)			-Throws your object into the void\n!catch							    -Catches something out of the void\n" \
-			"!start unscrambled					-Starts a game where you unscramble letters into a word\n!start hangman						-Starts a game of hangman\n!emoji (sentence)			   	  -Has the bot say your sentence with emoji letters\n" \
-			"!countemoji (emoji)			  	 -Displays the number of times someone reacted with that emoji\n!55x2 (amount of points)			  -Gambles an amount of your points (45% chance of doubling your points)\n!points 						      -Displays how many points you have\n" \
-			"!spreadsheets						 -Gives a link to a spreadsheet that tracks everyone's points\n```")
-		await client.send_message(message.channel, "The commands have been sent to your discord messages.")
+	elif message.content.startswith("!help") or message.content.startswith("!commands"):
+		embed = discord.Embed(description=  "\n `!colorpicker` - Shows a random color" +
+											"\n `!start unscramble` - Starts a game where you unscramble a word" +
+											"\n `!start hangman` - Starts a game of hangman" +
+											"\n `!random` - Starts a game where you guess a number between 1 and 10" +
+											"\n `!throw (SOMETHING)` - Throws the given thing into the void" +
+											"\n `!catch` - Catches something out of the void" +
+											"\n `!poll (QUESTION)` - Starts a Yes/No poll with the given question" +
+											"\n `!donate (AMOUNT)` - Tells P Room you want to donate the given amount (07 gp)", color=16771099)
+
+		embed.set_author(name="Party Room Bot Commands", icon_url="https://cdn.discordapp.com/attachments/456981569903525898/462314032934813698/proom.png")
+		await client.send_message(message.author, embed=embed)
+		await client.send_message(message.channel, "The commands have been sent to your private messages.")
 	#################################################
 	elif message.content.startswith('!colorpicker'):
 		color=('')
@@ -145,6 +162,23 @@ async def on_message(message):
 		objects=[]
 		await client.send_message(message.channel, "The void is now lonely.")
 	#########################################
+	elif message.content.startswith('!random'):
+		await client.send_message(message.channel, 'Guess a number between __**1**__ and __**10**__')
+
+		def guess_check(m):
+			return m.content.isdigit()
+
+		guess = await client.wait_for_message(timeout=5.0, author=message.author, check=guess_check)
+		answer = random.randint(1, 10)
+		if guess is None:
+			fmt = '**Sorry**, you took too long :cry:. It was __**{}**__.'
+			await client.send_message(message.channel, fmt.format(answer))
+			return
+		if int(guess.content) == answer:
+			await client.send_message(message.channel, 'You are **correct**! It was indeed __**{}**__!'.format(answer))
+		else:
+			await client.send_message(message.channel, '**Sorry**, it was actually __**{}**__.'.format(answer))
+	#############################################
 	elif message.content.startswith("!start unscramble"):
 		await client.send_message(message.channel, "The first person to type the unscrambled version of this word wins!")
 		word=str(open("words.csv").readlines()[random.randint(0,100)].splitlines()[0])
@@ -160,8 +194,6 @@ async def on_message(message):
 	elif (str(message.content)).lower()==str(word):
 		word="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs"
 		await client.send_message(message.channel, str(message.author)+" has succesfully unscrambled the word!")
-		#give_points(message.author,10)
-		#await client.send_message(message.channel, str(message.author)+" has been given 10 points.")
 	########################################
 	elif message.content.startswith("!skipword"):
 		if word!="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs":
@@ -233,8 +265,6 @@ async def on_message(message):
 			if guess == word1.lower():
 				reset()
 				await client.send_message(message.channel, "<@"+str(message.author.id)+"> has solved the puzzle!")
-				#give_points(message.author,10)
-				#await client.send_message(message.channel, str(message.author)+" has been given 10 points.")
 			elif guess not in solved:
 				wrong.append(message.content[7:])
 				guesses-=1
@@ -249,57 +279,25 @@ async def on_message(message):
 						blank[counter+counter]=guess
 				await client.send_message(message.channel, "```css\nUse !guess (letter or word here) to guess a letter, or the whole word\nThe first person to guess the word correctly wins!\n\n"+(''.join(blank))+"\n\nIncorrect guesses left: "+str(guesses)+"\nPrevious incorrect guesses: "+", ".join(wrong)+"\n```")			
 	#################################################
-	elif message.content.startswith("!55x2"):
-		if int(message.content[6:])<5:
-			await client.send_message(message.channel, "The minimum amount you can bet is 5 points.")
-		else:
-			counter=0
-			while True:
-				if sheet.cell(counter+2,2).value==str(message.author):
-					y=counter+2
-					break
-				elif sheet.cell(counter+2,2).value=="":
-					await client.send_message(message.channel, "<@"+str(message.author.id)+">, you don't have any points.")
-					break
-				else:
-					counter+=1
-			if int(sheet.cell(y,3).value)>=int(message.content[6:]):
-				roll=random.randint(1,100)
-				if roll in range(0,56):
-					await client.send_message(message.channel, "```css\n"+str(message.author)+" rolled a "+str(roll)+" and has lost "+str(message.content[6:])+" points.\n```")
-					sheet.update_cell(y,3,int(sheet.cell(y,3).value)-int(message.content[6:]))
-					sheet.update_cell(y,4, str(now)[:10])
-				else:
-					await client.send_message(message.channel, "```css\nCongratulations! "+str(message.author)+" rolled a "+str(roll)+" and has won "+str(message.content[6:])+" points.\n```")
-					sheet.update_cell(y,3,int(sheet.cell(y,3).value)+int(message.content[6:]))
-					sheet.update_cell(y,4, str(now)[:10])
-			else:
-				await client.send_message(message.channel, "<@"+str(message.author.id)+">, you don't have that many points!")
-	#################################################
-	elif message.content==("!embed"):
-		embed = discord.Embed(title="Party Room Rules:", description="1. Blah\n2. Blah\n3. Blah\n4. Blah", color=0x4E4CB6)
-		embed.set_thumbnail(url="http://icons.iconarchive.com/icons/killaaaron/adobe-cc-circles/1024/Adobe-Pr-icon.png")
-		await client.send_message(message.channel,embed=embed)
-	##############################################
-	elif message.content.startswith("!people"):
-		if isstaff(str(message.author.id))=="verified":
-			await client.send_message(message.author, "```css\nThe following people have entered the daily giveaway: "+(', '.join(raffle))+"\n```")
-		else:
-			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
-	###################################################
-	elif message.content.startswith("!draw"):
-		if isstaff(str(message.author.id))=="verified":
-			await client.send_message(client.get_channel("421064754266636298"), "The winner of the daily giveaway is <@"+str((message.server.get_member_named(random.choice(raffle))).id)+"> ! Contact <@375706874718191619> to claim your prize!")
-		else:
-			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
-	####################################################
-	elif message.content.startswith("!cleargiveaway"):
-		if isstaff(str(message.author.id))=="verified":
-			daily={}
-			raffle=[]
-			await client.send_message(message.channel, "The daily giveaway has now been cleared.")
-		else:
-			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
+	# elif message.content.startswith("!people"):
+	# 	if isstaff(str(message.author.id))=="verified":
+	# 		await client.send_message(message.author, "```css\nThe following people have entered the daily giveaway: "+(', '.join(raffle))+"\n```")
+	# 	else:
+	# 		await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
+	# ###################################################
+	# elif message.content.startswith("!draw"):
+	# 	if isstaff(str(message.author.id))=="verified":
+	# 		await client.send_message(client.get_channel("421064754266636298"), "The winner of the daily giveaway is <@"+str((message.server.get_member_named(random.choice(raffle))).id)+"> ! Contact <@375706874718191619> to claim your prize!")
+	# 	else:
+	# 		await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
+	# ####################################################
+	# elif message.content.startswith("!cleargiveaway"):
+	# 	if isstaff(str(message.author.id))=="verified":
+	# 		daily={}
+	# 		raffle=[]
+	# 		await client.send_message(message.channel, "The daily giveaway has now been cleared.")
+	# 	else:
+	# 		await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
 	####################################################
 	elif message.content.startswith("!jad on"):
 		bananamode=True
@@ -312,44 +310,31 @@ async def on_message(message):
 	elif message.content.startswith("!say"):
 		await client.edit_profile(avatar=message.author.avatar_url, username=str(message.author.nick))
 		print (str(message.author.avatar_url))
-	###################################################
 
 
 
 
 
 
-
-	###################################################
-	elif message.content==("!points"):
+	#############################################
+	elif message.content.startswith("!donate"):
+		client1 = gspread.authorize(creds)
+		sheet = client1.open("Points System").sheet1
+		#try:
+		donation=formatok(str(message.content)[8:])
+		donation=formatfromk(donation)
 		counter=0
 		while True:
-			if sheet.cell(counter+2,2).value==str(message.author):
-				await client.send_message(message.channel, "<@"+str(message.author.id)+"> has "+str(sheet.cell(counter+2,3).value)+" points.")
-				break;
-			elif sheet.cell(counter+2,2).value=="":
-				sheet.update_cell(counter+2,2, str(message.author))
-				sheet.update_cell(counter+2,3, "0")
-				sheet.update_cell(2,6, str(int(sheet.cell(2,6).value)+1))
-				await client.send_message(message.channel, "<@"+str(message.author.id)+"> has "+str(sheet.cell(counter+2,3).value)+" points.")
-				break;
+			if sheet.cell(counter+2, 1).value=="":
+				sheet.update_cell(counter+2, 1, str(message.author))
+				sheet.update_cell(counter+2, 2, donation)
+				sheet.update_cell(2, 3, str(datetime.datetime.now())[:-7])
+				sheet.update_cell(counter+2, 4, "No")
+				await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". P Room will message you soon to collect your donation.")
 			else:
 				counter+=1
-
-
-
-	elif  message.content.startswith("!points <@"):
-		member=message.server.get_member(message.content[10:28])
-		counter=0
-		while True:
-			if sheet.cell(counter+2,2).value==str(member):
-				await client.send_message(message.channel, "<@"+str(message.content[10:28])+"> has "+str(sheet.cell(counter+2,3).value)+" points.")
-				break;
-			elif sheet.cell(counter+2,2).value=="":
-				await client.send_message(message.channel, "That person has not set up their points yet.")
-				break;
-			else:
-				counter+=1
+		#except:
+		#	await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
 	#############################################
 	elif message.content.startswith("!spreadsheet"):
 		await client.send_message(message.channel, "https://docs.google.com/spreadsheets/d/1nEuPVTyiSYIV44mrswFFbYb5sjCCzCl1BN_m11MLPrA/edit?usp=sharing")

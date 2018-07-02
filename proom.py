@@ -130,14 +130,14 @@ async def on_message(message):
 			await client.logout()
 	##########################################
 	elif message.content.startswith("!help") or message.content.startswith("!commands"):
-		embed = discord.Embed(description=  "\n `!colorpicker` - Shows a random color" +
-											"\n `!start unscramble` - Starts a game where you unscramble a word" +
-											"\n `!start hangman` - Starts a game of hangman" +
-											"\n `!random` - Starts a game where you guess a number between 1 and 10" +
-											"\n `!throw (SOMETHING)` - Throws the given thing into the void" +
-											"\n `!catch` - Catches something out of the void" +
-											"\n `!poll (QUESTION)` - Starts a Yes/No poll with the given question" +
-											"\n `!donate (AMOUNT)` - Tells P Room you want to donate the given amount (07 gp)", color=16771099)
+		embed = discord.Embed(description=  "\n  `!colorpicker` - Shows a random color\n" +
+											"\n `!start unscramble` - Starts a game where you unscramble a word\n" +
+											"\n `!start hangman` - Starts a game of hangman\n" +
+											"\n `!random` - Starts a game where you guess a number between 1 and 10\n" +
+											"\n `!throw (SOMETHING)` - Throws the given thing into the void\n" +
+											"\n `!catch` - Catches something out of the void\n" +
+											"\n `!poll (QUESTION)` - Starts a Yes/No poll with the given question\n" +
+											"\n `!donate (AMOUNT)` - Tells P Room you want to donate the given amount (07 gp)\n", color=8926385)
 
 		embed.set_author(name="Party Room Bot Commands", icon_url="https://cdn.discordapp.com/attachments/456981569903525898/462314032934813698/proom.png")
 		await client.send_message(message.author, embed=embed)
@@ -230,6 +230,7 @@ async def on_message(message):
 			await client.send_message(message.channel, message.content[12:]+" has never been used before!")
 	############################################
 	elif message.content.startswith("!poll"):
+		await client.delete_message(message)
 		sent = await client.send_message(message.channel, "```css\n"+str(message.content[6:])+"\n\nRespond below with 👍 for YES, 👎 for NO, or 🤔 for UNSURE/NEUTRAL\n```")
 		await client.add_reaction(sent,"👍")
 		await client.add_reaction(sent,"👎")
@@ -321,21 +322,21 @@ async def on_message(message):
 	#############################################
 	elif message.content.startswith("!donate"):
 		try:
-		client1 = gspread.authorize(creds)
-		sheet = client1.open("Points System").sheet1
-		donation=formatok(str(message.content)[8:])
-		donation=formatfromk(donation)
-		counter=0
-		while True:
-			if sheet.cell(counter+2, 1).value=="":
-				sheet.update_cell(counter+2, 1, str(message.author))
-				sheet.update_cell(counter+2, 2, donation)
-				sheet.update_cell(counter+2, 3, str(datetime.datetime.now())[:-7])
-				sheet.update_cell(counter+2, 4, "No")
-				await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". P Room will message you soon to collect your donation.")
-				break
-			else:
-				counter+=1
+			client1 = gspread.authorize(creds)
+			sheet = client1.open("Points System").sheet1
+			donation=formatok(str(message.content)[8:])
+			donation=formatfromk(donation)
+			counter=0
+			while True:
+				if sheet.cell(counter+2, 1).value=="":
+					sheet.update_cell(counter+2, 1, str(message.author))
+					sheet.update_cell(counter+2, 2, donation)
+					sheet.update_cell(counter+2, 3, str(datetime.datetime.now())[:-7])
+					sheet.update_cell(counter+2, 4, "No")
+					await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". P Room will message you soon to collect your donation.")
+					break
+				else:
+					counter+=1
 		except:
 			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
 	#############################################

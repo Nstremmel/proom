@@ -1,0 +1,5 @@
+discord.py
+oauth2client
+gspread
+pandas
+psycopg2

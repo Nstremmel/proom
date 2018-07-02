@@ -323,7 +323,7 @@ async def on_message(message):
 	elif message.content.startswith("!donate"):
 		try:
 			client1 = gspread.authorize(creds)
-			sheet = client1.open("Points System").sheet1
+			sheet = client1.open("Party Room Donations").sheet1
 			donation=formatok(str(message.content)[8:])
 			donation=formatfromk(donation)
 			counter=0

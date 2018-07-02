@@ -320,9 +320,9 @@ async def on_message(message):
 
 	#############################################
 	elif message.content.startswith("!donate"):
+		try:
 		client1 = gspread.authorize(creds)
 		sheet = client1.open("Points System").sheet1
-		#try:
 		donation=formatok(str(message.content)[8:])
 		donation=formatfromk(donation)
 		counter=0
@@ -330,14 +330,14 @@ async def on_message(message):
 			if sheet.cell(counter+2, 1).value=="":
 				sheet.update_cell(counter+2, 1, str(message.author))
 				sheet.update_cell(counter+2, 2, donation)
-				sheet.update_cell(2, 3, str(datetime.datetime.now())[:-7])
+				sheet.update_cell(counter+2, 3, str(datetime.datetime.now())[:-7])
 				sheet.update_cell(counter+2, 4, "No")
 				await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". P Room will message you soon to collect your donation.")
 				break
 			else:
 				counter+=1
-		#except:
-		#	await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
+		except:
+			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
 	#############################################
 	elif message.content.startswith("!spreadsheet"):
 		await client.send_message(message.channel, "https://docs.google.com/spreadsheets/d/1nEuPVTyiSYIV44mrswFFbYb5sjCCzCl1BN_m11MLPrA/edit?usp=sharing")

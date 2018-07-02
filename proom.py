@@ -15,7 +15,7 @@ client = discord.Client()
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 client1 = gspread.authorize(creds)
-sheet = client1.open("Points System").sheet1
+sheet = client1.open("Party Room Donations").sheet1
 
 # import psycopg2
 # DATABASE_URL = os.environ['postgres://rbcuezaukicjrw:a4f881eb70b24835e7244c57842f479d569d7dd0ad51209b823620ff31057e3a@ec2-50-16-196-238.compute-1.amazonaws.com:5432/d2tedbh2aiu1ov']
@@ -165,7 +165,7 @@ async def on_message(message):
 		await client.send_message(message.channel, "The void is now lonely.")
 	#########################################
 	elif message.content.startswith('!random'):
-		await client.send_message(message.channel, 'Guess a number between __**1**__ and __**10**__')
+		await client.send_message(message.channel, 'Guess a number from __**1**__ to __**10**__')
 
 		def guess_check(m):
 			return m.content.isdigit()

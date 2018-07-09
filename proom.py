@@ -143,11 +143,14 @@ async def on_message(message):
 		await client.send_message(message.author, embed=embed)
 		await client.send_message(message.channel, "The commands have been sent to your private messages.")
 	#################################################
-	elif message.content.startswith('!colorpicker'):
+	elif message.content.startswith('!colorpicker') or message.content.startswith('!colourpicker'):
 		color=('')
 		for i in range(6):
 			color+=random.choice(colors)
-		await client.send_message(message.channel, "Your random color is https://www.colorhexa.com/"+color)
+		if message.content.startswith("!colorpicker"):
+			await client.send_message(message.channel, "Your random color is https://www.colorhexa.com/"+color)
+		elif message.content.startswith("!colourpicker"):
+			await client.send_message(message.channel, "Your random colour is https://www.colorhexa.com/"+color)
     #########################################
 	elif message.content.startswith("!throw"):
 		await client.send_message(message.channel,"You throw "+str(message.content[7:])+" into the deep, dark, empty void.")
@@ -237,19 +240,22 @@ async def on_message(message):
 		await client.add_reaction(sent,"🤔")
 	#############################################
 	elif message.content.startswith("!userinfo"):
+		try:
+			int(str(message.content[12:13]))
+			member=message.server.get_member(message.content[12:30])
+		except:
+			member=message.server.get_member(message.content[13:31])
 		roles=[]
-		for i in (message.author.roles):
-			roles.append(str(i.id))
-		if "417811258642006020" or "438872404157005846" in roles:
-			try:
-				int(str(message.content[12:13]))
-				member=message.server.get_member(message.content[12:30])
-			except:
-				member=message.server.get_member(message.content[13:31])
-			await client.send_message(message.channel, str(member)+" joined the server on "+str(member.joined_at).split(" ")[0])
-			await client.send_message(message.channel, str(member)+" created their account on "+str(member.created_at).split(" ")[0])
-		else:
-			await client.send_message(message.channel, "Sorry charlie, but only admins can use that command.")
+		for i in member.roles:
+			if str(i)=="@everyone":
+				roles.append("everyone")
+			else:
+				roles.append(i.name)
+		await client.send_message(message.channel, "Name: "+str(member))
+		await client.send_message(message.channel, "Roles: "+', '.join(roles))
+		await client.send_message(message.channel, "Joined server on: "+str(member.joined_at).split(" ")[0])
+		await client.send_message(message.channel, "Created account on: "+str(member.created_at).split(" ")[0])
+		await client.send_message(message.channel, "Playing: "+str(member.game))
 	##############################################
 	elif message.content.startswith("!start hangman"):
 		reset()

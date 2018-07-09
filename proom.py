@@ -252,11 +252,11 @@ async def on_message(message):
 			else:
 				roles.append(i.name)
 		embed = discord.Embed(description=" Name: "+str(member)+"\n"+
-											"Roles: "+', '.join(roles)+"\n"+
-											"Joined server on: "+str(member.joined_at).split(" ")[0]+"\n"+
-											"Created account on: "+str(member.created_at).split(" ")[0]+"\n"+
-											"Playing: "+str(member.game)+"\n", color=8270499)
-		embed.set_author(name="Information of <@"+str(member.id)+">", icon_url=str(member.avatar_url))
+											"\nRoles: "+', '.join(roles)+"\n"+
+											"\nJoined server on: "+str(member.joined_at).split(" ")[0]+"\n"+
+											"\nCreated account on: "+str(member.created_at).split(" ")[0]+"\n"+
+											"\nPlaying: "+str(member.game)+"\n", color=8270499)
+		embed.set_author(name="Information of "+str(member)[:-5], icon_url=str(member.avatar_url))
 		embed.set_footer(text="Spying on people's information isn't very nice...")
 		await client.send_message(message.channel, embed=embed)
 	##############################################

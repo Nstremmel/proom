@@ -258,6 +258,7 @@ async def on_message(message):
 											"Playing: "+str(member.game)+"\n", color=8270499)
 		embed.set_author(name="Information of <@"+str(member.id)+">", icon_url=str(member.avatar_url))
 		embed.set_footer(text="Spying on people's information isn't very nice...")
+		await client.send_message(message.channel, embed=embed)
 	##############################################
 	elif message.content.startswith("!start hangman"):
 		reset()

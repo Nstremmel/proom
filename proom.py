@@ -251,11 +251,13 @@ async def on_message(message):
 				roles.append("everyone")
 			else:
 				roles.append(i.name)
-		await client.send_message(message.channel, "Name: "+str(member))
-		await client.send_message(message.channel, "Roles: "+', '.join(roles))
-		await client.send_message(message.channel, "Joined server on: "+str(member.joined_at).split(" ")[0])
-		await client.send_message(message.channel, "Created account on: "+str(member.created_at).split(" ")[0])
-		await client.send_message(message.channel, "Playing: "+str(member.game))
+		embed = discord.Embed(description=" Name: "+str(member)+"\n"+
+											"Roles: "+', '.join(roles)+"\n"+
+											"Joined server on: "+str(member.joined_at).split(" ")[0]+"\n"+
+											"Created account on: "+str(member.created_at).split(" ")[0]+"\n"+
+											"Playing: "+str(member.game)+"\n", color=8270499)
+		embed.set_author(name="Information of <@"+str(member.id)+">", icon_url=str(member.avatar_url))
+		embed.set_footer(text="Spying on people's information isn't very nice...")
 	##############################################
 	elif message.content.startswith("!start hangman"):
 		reset()

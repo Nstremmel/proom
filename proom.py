@@ -334,7 +334,7 @@ async def on_message(message):
 			client1 = gspread.authorize(creds)
 			sheet = client1.open("Party Room Donations").sheet1
 			donation=formatok(str(message.content)[8:])
-			donation=formatfromk(donation)
+			donation=str(donation/1000)+"M"
 			counter=0
 			while True:
 				if sheet.cell(counter+2, 1).value=="":
@@ -342,7 +342,7 @@ async def on_message(message):
 					sheet.update_cell(counter+2, 2, donation)
 					sheet.update_cell(counter+2, 3, str(datetime.datetime.now())[:-7])
 					sheet.update_cell(counter+2, 4, "No")
-					await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". P Room will message you soon to collect your donation.")
+					await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". <@404408034694266881> will message you soon to collect your donation.")
 					break
 				else:
 					counter+=1

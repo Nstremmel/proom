@@ -113,6 +113,11 @@ async def on_reaction_add(reaction, user):
 async def on_message(message):
 	global words,objects,word,guesses,solved,blank,wrong,word1,bananamode
 
+	if "ram ranch" in (message.content).lower():
+		emoji = get(client.get_all_emojis(), name='ramranch')
+		sent = await client.send_message(message.channel, "18 naked cowboys in the showers at Ram Ranch! "+str(emoji)+" :shower:")
+		await client.add_reaction(sent, emoji)
+
 	if bananamode==True:
 		emoji = get(client.get_all_emojis(), name='jad')
 		await client.add_reaction(message, emoji)

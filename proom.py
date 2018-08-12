@@ -115,9 +115,10 @@ async def on_message(message):
 
 	if "ram ranch" in (message.content).lower():
 		if str(message.author.id)!="426579751583481857":
-			emoji = get(client.get_all_emojis(), name='ramranch')
-			sent = await client.send_message(message.channel, "18 naked cowboys in the showers at Ram Ranch! "+str(emoji)+" :shower:")
-			await client.add_reaction(sent, emoji)
+			if str(message.channel.id)=="420577410099052554":
+				emoji = get(client.get_all_emojis(), name='ramranch')
+				sent = await client.send_message(message.channel, "18 naked cowboys in the showers at Ram Ranch! "+str(emoji)+" :shower:")
+				await client.add_reaction(sent, emoji)
 
 	if bananamode==True:
 		emoji = get(client.get_all_emojis(), name='jad')

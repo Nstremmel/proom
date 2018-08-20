@@ -111,7 +111,7 @@ async def on_reaction_add(reaction, user):
 @client.event
 async def on_reaction_remove(reaction, user):
 	if str(reaction.message.author.id)=="294882584201003009":
-		await client.send_message(message.server.get_channel("429385148979609610"), str(reaction.emoji)+" was removed by <@"+str(user.id)+">.")
+		await client.send_message(reaction.message.server.get_channel("429385148979609610"), str(reaction.emoji)+" was removed by <@"+str(user.id)+">.")
 
 @client.event
 async def on_message(message):

@@ -82,7 +82,6 @@ bananamode=False
 
 
 
-
 #async def my_background_task():
 #	await client.wait_until_ready()
 #	while not client.is_closed:
@@ -108,6 +107,11 @@ async def on_reaction_add(reaction, user):
 		emojis[emoji]+=1
 	except:
 		emojis[emoji]=1
+
+@client.event
+async def on_reation_remove(reaction, user):
+	if str(reaction.message.author.id)=="294882584201003009":
+		await client.send_message(message.server.get_channel("429385148979609610"), str(reaction.emoji)+" was removed by <@"+str(user.id)+">.")
 
 @client.event
 async def on_message(message):

@@ -344,19 +344,27 @@ async def on_message(message):
 		try:
 			client1 = gspread.authorize(creds)
 			sheet = client1.open("Party Room Donations").sheet1
-			donation=formatok(str(message.content)[8:])
-			donation=str(donation/1000)+"M"
-			counter=0
-			while True:
-				if sheet.cell(counter+2, 1).value=="":
-					sheet.update_cell(counter+2, 1, str(message.author))
-					sheet.update_cell(counter+2, 2, donation)
-					sheet.update_cell(counter+2, 3, str(datetime.datetime.now())[:-7])
-					sheet.update_cell(counter+2, 4, "No")
-					await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". <@404408034694266881> will message you soon to collect your donation.")
-					break
-				else:
-					counter+=1
+			donation=float(message.content)[8:-1]
+			if donation<1 or str(donation[-1:]).lower()=="k":
+				await client.send_message(message.channel, "Sorry the minimum donation amount is 1m.")
+			else:
+				donation=donation/1000
+				if isinstance(donation, float):
+					if (donation).is_integer():
+						donation=int(donation)
+				donation=str(donation)+"M"
+
+				counter=0
+				while True:
+					if sheet.cell(counter+2, 1).value=="":
+						sheet.update_cell(counter+2, 1, str(message.author))
+						sheet.update_cell(counter+2, 2, donation)
+						sheet.update_cell(counter+2, 3, str(datetime.datetime.now())[:-7])
+						sheet.update_cell(counter+2, 4, "No")
+						await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". <@404408034694266881> will message you soon to collect your donation.")
+						break
+					else:
+						counter+=1
 		except:
 			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
 	#############################################

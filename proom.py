@@ -344,7 +344,7 @@ async def on_message(message):
 		#try:
 		client1 = gspread.authorize(creds)
 		sheet = client1.open("Party Room Donations").sheet1
-		donation=float(message.content)[8:-1]
+		donation=float(message.content[8:-1])
 		if donation<1 or str(donation[-1:]).lower()=="k":
 			await client.send_message(message.channel, "Sorry the minimum donation amount is 1m.")
 		else:

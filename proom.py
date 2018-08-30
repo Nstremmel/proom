@@ -348,7 +348,6 @@ async def on_message(message):
 		if donation<1 or str(message.content)[-1:].lower()=="k":
 			await client.send_message(message.channel, "Sorry the minimum donation amount is 1m.")
 		else:
-			donation=donation/1000
 			if isinstance(donation, float):
 				if (donation).is_integer():
 					donation=int(donation)

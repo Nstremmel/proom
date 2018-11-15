@@ -100,18 +100,12 @@ async def on_ready():
 
 @client.event
 async def on_reaction_add(reaction, user):
-	emoji = str((reaction.emoji))
-	if "<:" not in emoji:
-		emoji="Other"
-	try:
-		emojis[emoji]+=1
-	except:
-		emojis[emoji]=1
+	None
 
 @client.event
 async def on_reaction_remove(reaction, user):
 	if str(reaction.message.author.id)=="294882584201003009":
-		await client.send_message(reaction.message.server.get_channel("429385148979609610"), str(reaction.emoji)+" was removed by <@"+str(user.id)+">.")
+		await client.send_message(reaction.message.server.get_channel("511587300136845317"), str(reaction.emoji)+" was removed by <@"+str(user.id)+">.")
 
 @client.event
 async def on_message(message):
@@ -119,16 +113,16 @@ async def on_message(message):
 
 	if "ram ranch" in (message.content).lower():
 		if str(message.author.id)!="426579751583481857":
-			if str(message.channel.id)=="420577410099052554":
+			if str(message.channel.id)=="499012338670764042":
 				emoji = get(client.get_all_emojis(), name='ramranch')
 				sent = await client.send_message(message.channel, "18 naked cowboys in the showers at Ram Ranch! "+str(emoji)+" :shower:")
 				await client.add_reaction(sent, emoji)
 
-	if bananamode==True:
-		emoji = get(client.get_all_emojis(), name='jad')
-		await client.add_reaction(message, emoji)
+	# if bananamode==True:
+	# 	emoji = get(client.get_all_emojis(), name='jad')
+	# 	await client.add_reaction(message, emoji)
 
-	if message.channel not in (client.get_server("417404138578772008").channels):
+	if message.channel not in (client.get_server("498848816976363531").channels):
 		print(str(message.content)+"\n"+str(message.author))
 
 	#############################################

@@ -115,7 +115,7 @@ async def on_reaction_remove(reaction, user):
 
 @client.event
 async def on_message(message):
-	global words,objects,word,guesses,solved,blank,wrong,word1,bananamode
+	global word,guesses,solved,blank,wrong,word1,bananamode
 
 	if "ram ranch" in (message.content).lower():
 		if str(message.author.id)!="426579751583481857":
@@ -145,10 +145,8 @@ async def on_message(message):
 											"\n `!start unscramble` - Starts a game where you unscramble a word\n" +
 											"\n `!start hangman` - Starts a game of hangman\n" +
 											"\n `!random` - Starts a game where you guess a number between 1 and 10\n" +
-											"\n `!throw (SOMETHING)` - Throws the given thing into the void\n" +
-											"\n `!catch` - Catches something out of the void\n" +
 											"\n `!poll (QUESTION)` - Starts a Yes/No poll with the given question\n" +
-											"\n `!donate (AMOUNT)` - Tells P Room you want to donate the given amount (07 gp)\n", color=8926385)
+											"\n `!donate (AMOUNT)` - Notifys owners you want to donate the given amount (07 gp)\n", color=8926385)
 
 		embed.set_author(name="Party Room Bot Commands", icon_url="https://cdn.discordapp.com/attachments/456981569903525898/462314032934813698/proom.png")
 		await client.send_message(message.author, embed=embed)
@@ -162,21 +160,6 @@ async def on_message(message):
 			await client.send_message(message.channel, "Your random color is https://www.colorhexa.com/"+color)
 		elif message.content.startswith("!colourpicker"):
 			await client.send_message(message.channel, "Your random colour is https://www.colorhexa.com/"+color)
-    #########################################
-	elif message.content.startswith("!throw"):
-		await client.send_message(message.channel,"You throw "+str(message.content[7:])+" into the deep, dark, empty void.")
-		objects.append(str(message.content[7:]))
-	#########################################
-	elif message.content.startswith("!catch"):
-		if len(objects)==0:
-			caught="nothing"
-		else:
-			caught=str(random.choice(objects))
-		await client.send_message(message.channel, "You catch a "+caught+" out of the void that someone threw earlier!")
-	#########################################
-	elif message.content.startswith("!clearthevoid"):
-		objects=[]
-		await client.send_message(message.channel, "The void is now lonely.")
 	#########################################
 	elif message.content.startswith('!random'):
 		await client.send_message(message.channel, 'Guess a number from __**1**__ to __**10**__')
@@ -233,15 +216,6 @@ async def on_message(message):
 			else:
 				None
 		await client.send_message(message.channel, finalmessage)
-	##########################################
-	elif message.content.startswith("!countemoji"):
-		try:
-			if "<:" not in str(message.content[12:]):
-				await client.send_message(message.channel, "\"Other\" has been used "+str(emojis["Other"])+" times. (I can only count custom emojis individually, the natural emojis are counted together as \"Other\")")
-			elif "<:" in str(message.content[12:]):
-				await client.send_message(message.channel, message.content[12:]+" has been used "+str(emojis[message.content[12:]])+" times.")
-		except:
-			await client.send_message(message.channel, message.content[12:]+" has never been used before!")
 	############################################
 	elif message.content.startswith("!poll"):
 		await client.delete_message(message)
@@ -367,11 +341,132 @@ async def on_message(message):
 		except:
 			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
 	#############################################
-	elif message.content.startswith("!spreadsheet"):
-		await client.send_message(message.channel, "https://docs.google.com/spreadsheets/d/1nEuPVTyiSYIV44mrswFFbYb5sjCCzCl1BN_m11MLPrA/edit?usp=sharing")
+	elif message.content.startswith("!donate"):
+		try:
+			amount=(message.content).split(" ")[1]
+			if (amount[-1:]).lower()=="m":
+				donation=int(float(str(amount[:-1]))*1000)
+			elif (amount[-1:]).lower()=="k":
+				donation=int(str(amount[:-1]))
+			else:
+				donation=int(float(amount)*1000)
+
+			await client.send_message(message.server.get_channel("478634423718248449"), "<@"+str(message.author.id)+"> Has made a donation request of "+amount+".")
+			await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+amount+". A rank will message you soon to collect your donation.")
+		except:
+			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
+	#############################
+	elif message.content.startswith("!donations <@"):
+		try:
+			int(str(message.content).split(" ")[1][2:3])
+			member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
+		except:
+			member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
+
+		donations=getvalue(int(member.id), "donations")
+		if donations>=10000:
+			if len(str(donations))==5:
+				donations='{0:.4g}'.format(donations*0.001)+"M"
+			elif len(str(donations))==6:
+				donations='{0:.5g}'.format(donations*0.001)+"M"
+		else:
+			donations=str(donations)+"k"
+
+		embed = discord.Embed(color=16771250)
+		embed.set_author(name=(str(member))[:-5]+"'s Total Donations", icon_url=str(member.avatar_url))
+		embed.add_field(name="Donations", value=donations, inline=True)
+		embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
+		await client.send_message(message.channel, embed=embed)
+	##########################
+	elif (message.content)==("!donations"):
+		donations=getvalue(int(message.author.id), "donations")
+		if donations>=10000:
+			if len(str(donations))==5:
+				donations='{0:.4g}'.format(donations*0.001)+"M"
+			elif len(str(donations))==6:
+				donations='{0:.5g}'.format(donations*0.001)+"M"
+		else:
+			donations=str(donations)+"k"
+
+		embed = discord.Embed(color=16771250)
+		embed.set_author(name=(str(message.author))[:-5]+"'s Total Donations", icon_url=str(message.author.avatar_url))
+		embed.add_field(name="Donations", value=donations, inline=True)
+		embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
+		await client.send_message(message.channel, embed=embed)
+	############################
+	elif message.content.startswith("!top donations"):
+		c.execute("SELECT * From rsmoney ORDER BY donations DESC LIMIT 10")
+		donors=c.fetchall()
+		words=""
+		for counter, i in enumerate(donors):
+			userid=i[0]
+			donation=i[4]
+
+			if donation>=10000:
+				if len(str(donation))==5:
+					donation='{0:.4g}'.format(donation*0.001)+"M"
+				elif len(str(donation))==6:
+					donation='{0:.5g}'.format(donation*0.001)+"M"
+			else:
+				donation=str(donation)+"k"
+
+			words+=(str(counter+1)+". "+str(message.server.get_member(str(userid)))+" - "+donation+"\n\n")
+
+		embed = discord.Embed(color=16771250, description=words)
+		embed.set_author(name="RSGiveaways Top Donations", icon_url=str(message.author.avatar_url))
+		embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
+		await client.send_message(message.channel, embed=embed)
+	#########################
+	elif message.content.startswith("!dupdate"):
+		try:
+			if (message.channel.id)=="478634423718248449":
+				amount=str(message.content).split(" ")[2]
+
+				if (amount[-1:]).lower()=="m":
+					donation=int(float(str(amount[:-1]))*1000)
+				elif (amount[-1:]).lower()=="k":
+					donation=int(str(amount[:-1]))
+				else:
+					donation=int(float(amount)*1000)
+
+				try:
+					int(str(message.content).split(" ")[1][2:3])
+					member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
+				except:
+					member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
+
+				donations=getvalue(int(member.id), "donations")
+				c.execute("UPDATE rsmoney SET donations={} WHERE id={}".format(donations+donation, member.id))
+				conn.commit()
+				member=message.server.get_member(str(member.id))
+				await client.send_message(message.channel, str(member)+"'s donations have been updated.")
+			else:
+				None
+		except:
+			await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!dupdate (@user) (amount)`.")
+
 	##############################################
-
-
+	elif message.content.startswith("!rules"):
+		await client.delete_message(message)
+		embed = discord.Embed(description="__Discord and CC__"+
+											"\n**1.** `No racism/sexism or any of the other \"isms\"`"+
+											"\n**2.** `No Advertising other Websites or Discord Servers`"+
+											"\n**3.** `No spam/flooding or capslock all day`"+
+											"\n**4.** `No excessive trolling, tagging, or otherwise bothering people needlessly!`"+
+											"\n**5.** `No trolling other communities or advertising in other CCs/Discords!`"+
+											"\n**6.** `No begging! Be thankful for the generosity of our hosts` :heart: "+
+											"\n**7.** `No advertising RWT`"+
+											"\n**8.** `No Pornographic Images or Videos`"+
+											"\n**9.** `If you find ranks doing anything they shouldn't be, please report it to a founder`"+
+											"\n\n__Giveaway Specific__"+
+											"\n**1.** `Only 07 gp/item can be given away, no accounts, irl transfers or services`"+
+											"\n**2.** `NO ALTS entering giveaways!`"+
+											"\n\n__**Our Mission**__"+
+											"\n\n- To provide a safe, welcoming and drama-free space to share your achievements and to create unforgettable moments with people you'll want to call family."+
+											"\n\n- To enrich *your* 07 experience! The Party Room is an 07 giveaway server :heart: ", color=12389380)
+		embed.set_author(name="Party Room Rules", icon_url=str(message.server.icon_url))
+		embed.set_footer(text="Follow the rules so you don't get banned :)")
+		await client.send_message(message.channel, embed=embed)
 
 #client.loop.create_task(my_background_task())
 

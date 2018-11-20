@@ -17,9 +17,9 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', s
 client1 = gspread.authorize(creds)
 sheet = client1.open("Party Room Donations").sheet1
 
-# import psycopg2
-# DATABASE_URL = os.environ['postgres://rbcuezaukicjrw:a4f881eb70b24835e7244c57842f479d569d7dd0ad51209b823620ff31057e3a@ec2-50-16-196-238.compute-1.amazonaws.com:5432/d2tedbh2aiu1ov']
-# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+import psycopg2
+DATABASE_URL = os.environ['postgres://rbcuezaukicjrw:a4f881eb70b24835e7244c57842f479d569d7dd0ad51209b823620ff31057e3a@ec2-50-16-196-238.compute-1.amazonaws.com:5432/d2tedbh2aiu1ov']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 
 
@@ -35,6 +35,8 @@ def isstaff(checkedid):
 	for i in open("staff.txt"):
 		if str(i.split(" ")[0])==str(checkedid):
 			return "verified"
+
+
 
 def formatok(amount):
 	#takes amount as string from message.content
@@ -77,19 +79,22 @@ emojis={}
 raffle=[]
 daily={}
 giveaway=[]
+day=int(datetime.datetime.today().day)
 bananamode=False
 
 
 
 
-#async def my_background_task():
-#	await client.wait_until_ready()
-#	while not client.is_closed:
-#		client1 = gspread.authorize(creds)
-#		sheet = client1.open("Points System").sheet1
-#		sheet.update_cell(27,27,"Authenticated")
-#		print("authenticated")
-#		await asyncio.sleep(600)
+async def my_background_task():
+	await client.wait_until_ready()
+	while not client.is_closed:
+		# client1 = gspread.authorize(creds)
+		# sheet = client1.open("Points System").sheet1
+		# sheet.update_cell(27,27,"Authenticated")
+		# print("authenticated")
+		day=int(datetime.datetime.today().day)
+		if
+		await asyncio.sleep(600)
 
 
 
@@ -111,6 +116,7 @@ async def on_reaction_remove(reaction, user):
 async def on_message(message):
 	global word,guesses,solved,blank,wrong,word1,bananamode
 
+	if 
 	if "ram ranch" in (message.content).lower():
 		if str(message.author.id)!="426579751583481857":
 			if str(message.channel.id)=="499012338670764042":
@@ -270,25 +276,25 @@ async def on_message(message):
 						blank[counter+counter]=guess
 				await client.send_message(message.channel, "```css\nUse !guess (letter or word here) to guess a letter, or the whole word\nThe first person to guess the word correctly wins!\n\n"+(''.join(blank))+"\n\nIncorrect guesses left: "+str(guesses)+"\nPrevious incorrect guesses: "+", ".join(wrong)+"\n```")			
 	#################################################
-	# elif message.content.startswith("!people"):
-	# 	if isstaff(str(message.author.id))=="verified":
-	# 		await client.send_message(message.author, "```css\nThe following people have entered the daily giveaway: "+(', '.join(raffle))+"\n```")
-	# 	else:
-	# 		await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
-	# ###################################################
+	elif message.content.startswith("!people"):
+		if isstaff(str(message.author.id))=="verified":
+			await client.send_message(message.author, "```css\nThe following people have entered the daily giveaway: "+(', '.join(raffle))+"\n```")
+		else:
+			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
+	###################################################
 	# elif message.content.startswith("!draw"):
 	# 	if isstaff(str(message.author.id))=="verified":
 	# 		await client.send_message(client.get_channel("421064754266636298"), "The winner of the daily giveaway is <@"+str((message.server.get_member_named(random.choice(raffle))).id)+"> ! Contact <@375706874718191619> to claim your prize!")
 	# 	else:
 	# 		await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
-	# ####################################################
-	# elif message.content.startswith("!cleargiveaway"):
-	# 	if isstaff(str(message.author.id))=="verified":
-	# 		daily={}
-	# 		raffle=[]
-	# 		await client.send_message(message.channel, "The daily giveaway has now been cleared.")
-	# 	else:
-	# 		await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
+	####################################################
+	elif message.content.startswith("!cleargiveaway"):
+		if isstaff(str(message.author.id))=="verified":
+			daily={}
+			raffle=[]
+			await client.send_message(message.channel, "The daily giveaway has now been cleared.")
+		else:
+			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
 	####################################################
 	elif message.content.startswith("!jad on"):
 		bananamode=True
@@ -440,28 +446,55 @@ async def on_message(message):
 			await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!dupdate (@user) (amount)`.")
 
 	##############################################
-	elif message.content.startswith("!rules"):
-		await client.delete_message(message)
-		embed = discord.Embed(description="__Discord and CC__"+
-											"\n**1.** `No racism/sexism or any of the other \"isms\"`"+
-											"\n**2.** `No Advertising other Websites or Discord Servers`"+
-											"\n**3.** `No spam/flooding or capslock all day`"+
-											"\n**4.** `No excessive trolling, tagging, or otherwise bothering people needlessly!`"+
-											"\n**5.** `No trolling other communities or advertising in other CCs/Discords!`"+
-											"\n**6.** `No begging! Be thankful for the generosity of our hosts` :heart: "+
-											"\n**7.** `No advertising RWT`"+
-											"\n**8.** `No Pornographic Images or Videos`"+
-											"\n**9.** `If you find ranks doing anything they shouldn't be, please report it to a founder`"+
-											"\n\n__Giveaway Specific__"+
-											"\n**1.** `Only 07 gp/item can be given away, no accounts, irl transfers or services`"+
-											"\n**2.** `NO ALTS entering giveaways!`"+
-											"\n\n__**Our Mission**__"+
-											"\n\n- To provide a safe, welcoming and drama-free space to share your achievements and to create unforgettable moments with people you'll want to call family."+
-											"\n\n- To enrich *your* 07 experience! The Party Room is an 07 giveaway server :heart: ", color=12389380)
-		embed.set_author(name="Party Room Rules", icon_url=str(message.server.icon_url))
-		embed.set_footer(text="Follow the rules so you don't get banned :)")
-		await client.send_message(message.channel, embed=embed)
+	# elif message.content.startswith("!rules"):
+	# 	await client.delete_message(message)
+	# 	embed = discord.Embed(description="__Discord and CC__"+
+	# 										"\n**1.** `No racism/sexism or any of the other \"isms\"`"+
+	# 										"\n**2.** `No Advertising other Websites or Discord Servers`"+
+	# 										"\n**3.** `No spam/flooding or capslock all day`"+
+	# 										"\n**4.** `No excessive trolling, tagging, or otherwise bothering people needlessly!`"+
+	# 										"\n**5.** `No trolling other communities or advertising in other CCs/Discords!`"+
+	# 										"\n**6.** `No begging! Be thankful for the generosity of our hosts` :heart: "+
+	# 										"\n**7.** `No advertising RWT`"+
+	# 										"\n**8.** `No Pornographic Images or Videos`"+
+	# 										"\n**9.** `If you find ranks doing anything they shouldn't be, please report it to a founder`"+
+	# 										"\n\n__Giveaway Specific__"+
+	# 										"\n**1.** `Only 07 gp/item can be given away, no accounts, irl transfers or services`"+
+	# 										"\n**2.** `NO ALTS entering giveaways!`"+
+	# 										"\n\n__**Our Mission**__"+
+	# 										"\n\n- To provide a safe, welcoming and drama-free space to share your achievements and to create unforgettable moments with people you'll want to call family."+
+	# 										"\n\n- To enrich *your* 07 experience! The Party Room is an 07 giveaway server :heart: ", color=12389380)
+	# 	embed.set_author(name="Party Room Rules", icon_url=str(message.server.icon_url))
+	# 	embed.set_footer(text="Follow the rules so you don't get banned :)")
+	# 	await client.send_message(message.channel, embed=embed)
+	################################################
+	elif message.content.startswith("!notify-on"):
+		notify=""
+		for i in message.author.roles:
+			print(str(i))
+			if str(i)=="Notify":
+				notify=i
+		if notify=="":
+			await add_roles(message.author, notify)
+			await client.send_message(message.author, "You will now be notified for giveaways. :tada: ")
+		else:
+			await client.send_message(message.channel, "You already have that role! Use `!notify-off` to remove it.")
+	elif message.content.startswith("!notify-off"):
+		notify=""
+		for i in message.author.roles:
+			if str(i)=="Notify":
+				notify=i
+		if notify!="":
+			remove_roles(message.author, notify)
+			await client.send_message(message.author, "You will no longer be notified for giveaways.")
+		elif:
+			await client.send_message(message.channel, "You don't currently have this role. Use `!notify-on` to add it.")
+	#################################################
 
+
+
+
+	
 #client.loop.create_task(my_background_task())
 
 Bot_Token = os.environ['TOKEN']

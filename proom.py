@@ -17,10 +17,10 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', s
 client1 = gspread.authorize(creds)
 sheet = client1.open("Party Room Donations").sheet1
 
-import psycopg2
-DATABASE_URL = os.environ['postgres://rbcuezaukicjrw:a4f881eb70b24835e7244c57842f479d569d7dd0ad51209b823620ff31057e3a@ec2-50-16-196-238.compute-1.amazonaws.com:5432/d2tedbh2aiu1ov']
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-conn.Close()
+# import psycopg2
+# DATABASE_URL = os.environ['postgres://rbcuezaukicjrw:a4f881eb70b24835e7244c57842f479d569d7dd0ad51209b823620ff31057e3a@ec2-50-16-196-238.compute-1.amazonaws.com:5432/d2tedbh2aiu1ov']
+# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+# conn.Close()
 
 
 def reset():

@@ -487,7 +487,7 @@ async def on_message(message):
 		if notify!="":
 			remove_roles(message.author, notify)
 			await client.send_message(message.author, "You will no longer be notified for giveaways.")
-		elif:
+		else:
 			await client.send_message(message.channel, "You don't currently have this role. Use `!notify-on` to add it.")
 	#################################################
 

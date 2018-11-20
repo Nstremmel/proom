@@ -117,7 +117,6 @@ async def on_reaction_remove(reaction, user):
 async def on_message(message):
 	global word,guesses,solved,blank,wrong,word1,bananamode
 
-	if 
 	if "ram ranch" in (message.content).lower():
 		if str(message.author.id)!="426579751583481857":
 			if str(message.channel.id)=="499012338670764042":

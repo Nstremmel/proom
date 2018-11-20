@@ -475,7 +475,7 @@ async def on_message(message):
 			if str(i)=="Notify":
 				notify=i
 		if notify=="":
-			await add_roles(message.author, notify)
+			await client.add_roles(message.author, notify)
 			await client.send_message(message.author, "You will now be notified for giveaways. :tada: ")
 		else:
 			await client.send_message(message.channel, "You already have that role! Use `!notify-off` to remove it.")
@@ -485,7 +485,7 @@ async def on_message(message):
 			if str(i)=="Notify":
 				notify=i
 		if notify!="":
-			remove_roles(message.author, notify)
+			await client.remove_roles(message.author, notify)
 			await client.send_message(message.author, "You will no longer be notified for giveaways.")
 		else:
 			await client.send_message(message.channel, "You don't currently have this role. Use `!notify-on` to add it.")

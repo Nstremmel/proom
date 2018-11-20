@@ -92,8 +92,9 @@ async def my_background_task():
 		# sheet = client1.open("Points System").sheet1
 		# sheet.update_cell(27,27,"Authenticated")
 		# print("authenticated")
+		if int(day)!=int(datetime.datetime.today().day):
+			print("Do shit")
 		day=int(datetime.datetime.today().day)
-		if
 		await asyncio.sleep(600)
 
 

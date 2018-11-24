@@ -469,23 +469,19 @@ async def on_message(message):
 	# 	await client.send_message(message.channel, embed=embed)
 	################################################
 	elif message.content.startswith("!notify-on"):
-		notify=""
-		for i in message.author.roles:
-			if str(i)=="Notify":
-				notify=i
-		if notify=="":
-			await client.add_roles(message.author, [Notify])
+		notify=get(message.server.roles, name='Notify')
+		if notify in message.author.roles:
+			await client.add_roles(message.author, [notify])
 			await client.send_message(message.author, "You will now be notified for giveaways. :tada: ")
 		else:
 			await client.send_message(message.channel, "You already have that role! Use `!notify-off` to remove it.")
+			
 	elif message.content.startswith("!notify-off"):
-		notify=""
-		for i in message.author.roles:
-			if str(i)=="Notify":
-				notify=i
-		if notify!="":
-			await client.remove_roles(message.author, notify)
+		notify=get(message.server.roles, name='Notify')
+		if notify in message.author.roles:
+			await client.remove_roles(message.author, [notify])
 			await client.send_message(message.author, "You will no longer be notified for giveaways.")
+			await client.delete_message(message)
 		else:
 			await client.send_message(message.channel, "You don't currently have this role. Use `!notify-on` to add it.")
 	#################################################

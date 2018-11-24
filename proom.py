@@ -471,11 +471,10 @@ async def on_message(message):
 	elif message.content.startswith("!notify-on"):
 		notify=""
 		for i in message.author.roles:
-			print(str(i))
 			if str(i)=="Notify":
 				notify=i
 		if notify=="":
-			await client.add_roles(message.author, notify)
+			await client.add_roles(message.author, roles='Notify')
 			await client.send_message(message.author, "You will now be notified for giveaways. :tada: ")
 		else:
 			await client.send_message(message.channel, "You already have that role! Use `!notify-off` to remove it.")

@@ -471,7 +471,7 @@ async def on_message(message):
 	elif message.content.startswith("!notify-on"):
 		notify=get(message.server.roles, name='Notify')
 		if notify not in message.author.roles:
-			await client.add_roles(message.author, [notify])
+			await client.add_roles(message.author, notify)
 			await client.send_message(message.author, "You will now be notified for giveaways. :tada: ")
 		else:
 			await client.send_message(message.channel, "You already have that role! Use `!notify-off` to remove it.")
@@ -479,7 +479,7 @@ async def on_message(message):
 	elif message.content.startswith("!notify-off"):
 		notify=get(message.server.roles, name='Notify')
 		if notify in message.author.roles:
-			await client.remove_roles(message.author, [notify])
+			await client.remove_roles(message.author, notify)
 			await client.send_message(message.author, "You will no longer be notified for giveaways.")
 			await client.delete_message(message)
 		else:

@@ -75,10 +75,7 @@ def formatfromk(amount):
 colors=["A","B","C","D","E","F","0","1","2","3","4","5","6","7","8","9"]
 objects=[]
 word="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs"
-emojis={}
-raffle=[]
-daily={}
-giveaway=[]
+people=[]
 day=int(datetime.datetime.today().day)
 bananamode=False
 
@@ -86,6 +83,7 @@ bananamode=False
 
 
 async def my_background_task():
+	global people
 	await client.wait_until_ready()
 	while not client.is_closed:
 		# client1 = gspread.authorize(creds)
@@ -93,9 +91,13 @@ async def my_background_task():
 		# sheet.update_cell(27,27,"Authenticated")
 		# print("authenticated")
 		if int(day)!=int(datetime.datetime.today().day):
-			print("Do shit")
+			embed = discord.Embed(description="<@"+random.choice(people)+"> has won today's giveaway! DM <@199630284906430465> to claim your **1m**!", color=16724736)
+			embed.set_author(name="Daily Holiday Giveaway", icon_url=str(member.avatar_url))
+			embed.set_footer(text="Provided by Scandal and Poet ;)")
+			await client.send_message(client.get_channel("510329148003319818"), embed=embed)
+			people=[]
 		day=int(datetime.datetime.today().day)
-		await asyncio.sleep(600)
+		await asyncio.sleep(3600)
 
 
 
@@ -115,7 +117,7 @@ async def on_reaction_remove(reaction, user):
 
 @client.event
 async def on_message(message):
-	global word,guesses,solved,blank,wrong,word1,bananamode
+	global word,guesses,solved,blank,wrong,word1,bananamode,people
 
 	if "ram ranch" in (message.content).lower():
 		if str(message.author.id)!="426579751583481857":
@@ -149,7 +151,7 @@ async def on_message(message):
 											"\n `!donate (AMOUNT)` - Notifys owners you want to donate the given amount (07 gp)\n", color=8926385)
 
 		embed.set_author(name="Party Room Bot Commands", icon_url="https://cdn.discordapp.com/attachments/456981569903525898/462314032934813698/proom.png")
-		await client.send_message(message.author, embed=embed)
+		await client.send_message(message.channel, embed=embed)
 		await client.send_message(message.channel, "The commands have been sent to your private messages.")
 	#################################################
 	elif message.content.startswith('!colorpicker') or message.content.startswith('!colourpicker'):
@@ -277,21 +279,24 @@ async def on_message(message):
 				await client.send_message(message.channel, "```css\nUse !guess (letter or word here) to guess a letter, or the whole word\nThe first person to guess the word correctly wins!\n\n"+(''.join(blank))+"\n\nIncorrect guesses left: "+str(guesses)+"\nPrevious incorrect guesses: "+", ".join(wrong)+"\n```")			
 	#################################################
 	elif message.content.startswith("!people"):
+		await client.send_message(message.channel, "```css\nThe following people have entered the daily giveaway: "+(', '.join(people))+"\n```")
+	###################################################
+	elif message.content.startswith("!giveaway"):
+		if str(message.author.id) not in people:
+			people.append(str(message.author.id))
+			await client.send_message(message.channel, "You have been entered in today's giveaway! If you win, dm <@199630284906430465> to claim your **1m**!")
+		else:
+			await client.send_message(message.channel, "You have already entered the daily giveaway for today!")
+	##################################################
+	elif message.content.startswith("!manualdraw"):
 		if isstaff(str(message.author.id))=="verified":
-			await client.send_message(message.author, "```css\nThe following people have entered the daily giveaway: "+(', '.join(raffle))+"\n```")
+			await client.send_message(client.get_channel("421064754266636298"), "The winner of the daily giveaway is <@"+str((message.server.get_member_named(random.choice(raffle))).id)+"> ! Contact <@375706874718191619> to claim your prize!")
 		else:
 			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
-	###################################################
-	# elif message.content.startswith("!draw"):
-	# 	if isstaff(str(message.author.id))=="verified":
-	# 		await client.send_message(client.get_channel("421064754266636298"), "The winner of the daily giveaway is <@"+str((message.server.get_member_named(random.choice(raffle))).id)+"> ! Contact <@375706874718191619> to claim your prize!")
-	# 	else:
-	# 		await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
 	####################################################
 	elif message.content.startswith("!cleargiveaway"):
 		if isstaff(str(message.author.id))=="verified":
-			daily={}
-			raffle=[]
+			people=[]
 			await client.send_message(message.channel, "The daily giveaway has now been cleared.")
 		else:
 			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
@@ -472,7 +477,7 @@ async def on_message(message):
 		notify=get(message.server.roles, name='Notify')
 		if notify not in message.author.roles:
 			await client.add_roles(message.author, notify)
-			await client.send_message(message.author, "You will now be notified for giveaways. :tada: ")
+			await client.send_message(message.channel, "You will now be notified for giveaways. :tada: ")
 		else:
 			await client.send_message(message.channel, "You already have that role! Use `!notify-off` to remove it.")
 
@@ -480,7 +485,7 @@ async def on_message(message):
 		notify=get(message.server.roles, name='Notify')
 		if notify in message.author.roles:
 			await client.remove_roles(message.author, notify)
-			await client.send_message(message.author, "You will no longer be notified for giveaways.")
+			await client.send_message(message.channel, "You will no longer be notified for giveaways.")
 			await client.delete_message(message)
 		else:
 			await client.send_message(message.channel, "You don't currently have this role. Use `!notify-on` to add it.")

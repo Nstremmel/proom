@@ -126,7 +126,7 @@ async def on_reaction_remove(reaction, user):
 
 @client.event
 async def on_message(message):
-	global word,guesses,solved,blank,wrong,word1,bananamode,people
+	global word,guesses,solved,blank,wrong,word1,people
 
 	if "ram ranch" in (message.content).lower():
 		if str(message.author.id)!="426579751583481857":
@@ -136,17 +136,15 @@ async def on_message(message):
 				await client.add_reaction(sent, emoji)
 
 	if ":goofygang:" in str(message.content):
-		await client.delete_message(message)
+		gang=get(message.server.roles, name='Goofy Gang')
+		if gang not in message.author.roles:
+			await client.delete_message(message)
 
 	if "<@&511968689474633728>" in str(message.content):
 		if str(message.channel.id)=="499012338670764042":
 			emoji = get(client.get_all_emojis(), name='goofygang')
 			sent = await client.send_message(message.channel, str(emoji)+"**Goofy Goobers Gucci Gang!**"+str(emoji))
 			await client.add_reaction(sent, emoji)
-
-	# if bananamode==True:
-	# 	emoji = get(client.get_all_emojis(), name='jad')
-	# 	await client.add_reaction(message, emoji)
 
 	if message.channel not in (client.get_server("498848816976363531").channels):
 		print(str(message.content)+"\n"+str(message.author))
@@ -311,9 +309,9 @@ async def on_message(message):
 		c.execute("SELECT people FROM giveaway WHERE gnumber=1")
 		people=str(c.fetchone()[0])
 		if "<@"+str(message.author.id)+">" not in people:
-			c.execute("UPDATE giveaway SET people={} WHERE gnumber=1".format(str(people)+"\n<@"+str(message.author.id)+">"))
+			c.execute("UPDATE giveaway SET people={} WHERE gnumber=1".format((str(people)+"\n<@"+str(message.author.id)+">")))
 			conn.commit()
-			await client.send_message(message.channel, "You have been entered in today's giveaway! If you win, dm Old Poet to claim your **1m**!")
+			await client.send_message(message.channel, "You have been entered in today's giveaway! Use `!people` to see who else is entered.")
 		else:
 			await client.send_message(message.channel, "You have already entered the daily giveaway for today!")
 	##################################################
@@ -332,14 +330,6 @@ async def on_message(message):
 			await client.send_message(message.channel, "The daily giveaway has now been cleared.")
 		else:
 			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
-	####################################################
-	elif message.content.startswith("!jad on"):
-		bananamode=True
-		await client.send_message(message.channel, "Fight Cave Initiated! It's time for <@293268085245214721> to fail again! <:jad:461287872293503027>")
-	##################################################
-	elif message.content.startswith("!jad off"):
-		bananamode=False
-		await client.send_message(message.channel, "You have lost to the almighty JAD <:jad:461287872293503027>")
 	###################################################
 	elif message.content.startswith("!say"):
 		await client.edit_profile(avatar=message.author.avatar_url, username=str(message.author.nick))

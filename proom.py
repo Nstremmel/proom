@@ -105,8 +105,8 @@ async def my_background_task():
 			embed.set_author(name="Daily Holiday Giveaway", icon_url=str(member.avatar_url))
 			embed.set_footer(text="Provided by Scandal and Poet ;)")
 			await client.send_message(client.get_channel("510329148003319818"), embed=embed)
-			c.execute("UPDATE giveaway SET people={} WHERE gnumber=1".format(""))
-		c.execute("UPDATE giveaway SET day={} WHERE gnumber=1".format(int(datetime.datetime.today().day)))
+			c.execute("UPDATE giveaway SET people='{}' WHERE gnumber=1".format(""))
+		c.execute("UPDATE giveaway SET day='{}' WHERE gnumber=1".format(int(datetime.datetime.today().day)))
 		conn.commit()
 		await asyncio.sleep(3600)
 
@@ -309,7 +309,7 @@ async def on_message(message):
 		c.execute("SELECT people FROM giveaway WHERE gnumber=1")
 		people=str(c.fetchone()[0])
 		if "<@"+str(message.author.id)+">" not in people:
-			c.execute("UPDATE giveaway SET people={} WHERE gnumber=1".format((str(people)+"\n<@"+str(message.author.id)+">")))
+			c.execute("UPDATE giveaway SET people='{}' WHERE gnumber=1".format((people+"\n<@"+str(message.author.id)+">")))
 			conn.commit()
 			await client.send_message(message.channel, "You have been entered in today's giveaway! Use `!people` to see who else is entered.")
 		else:
@@ -325,7 +325,7 @@ async def on_message(message):
 	####################################################
 	elif message.content.startswith("!cleargiveaway"):
 		if isstaff(str(message.author.id))=="verified":
-			c.execute("UPDATE giveaway SET people={} WHERE gnumber=1".format(""))
+			c.execute("UPDATE giveaway SET people='{}' WHERE gnumber=1".format(""))
 			conn.commit()
 			await client.send_message(message.channel, "The daily giveaway has now been cleared.")
 		else:

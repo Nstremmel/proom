@@ -135,8 +135,11 @@ async def on_message(message):
 				sent = await client.send_message(message.channel, "18 naked cowboys in the showers at Ram Ranch! "+str(emoji)+" :shower:")
 				await client.add_reaction(sent, emoji)
 
-	if "<:goofygang:516421546500292608>" in message:
+	if "<:goofygang:516421546500292608>" in str(message.content):
 		await client.delete_message(message)
+
+	#if "<&"
+	
 	# if bananamode==True:
 	# 	emoji = get(client.get_all_emojis(), name='jad')
 	# 	await client.add_reaction(message, emoji)

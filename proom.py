@@ -23,13 +23,13 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 c=conn.cursor()
 
 #c.execute("DROP TABLE data")
-c.execute("""CREATE TABLE giveaway (
-				gnumber int,
-				people text,
-				day int
-				)""")
-c.execute("INSERT INTO giveaway VALUES (%s, %s, %s)", (1, "", int(datetime.datetime.today().day)))
-conn.commit()
+# c.execute("""CREATE TABLE giveaway (
+# 				gnumber int,
+# 				people text,
+# 				day int
+# 				)""")
+# c.execute("INSERT INTO giveaway VALUES (%s, %s, %s)", (1, "", int(datetime.datetime.today().day)))
+# conn.commit()
 
 
 def reset():

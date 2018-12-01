@@ -17,10 +17,19 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', s
 client1 = gspread.authorize(creds)
 sheet = client1.open("Party Room Donations").sheet1
 
-# import psycopg2
-# DATABASE_URL = os.environ['postgres://rbcuezaukicjrw:a4f881eb70b24835e7244c57842f479d569d7dd0ad51209b823620ff31057e3a@ec2-50-16-196-238.compute-1.amazonaws.com:5432/d2tedbh2aiu1ov']
-# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-# conn.Close()
+import psycopg2
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+c=conn.cursor()
+
+#c.execute("DROP TABLE data")
+c.execute("""CREATE TABLE giveaway (
+				gnumber int
+				people text,
+				day int
+				)""")
+c.execute("INSERT INTO data VALUES (%s, %s, %s)", (1, "", int(datetime.datetime.today().day)))
+conn.commit()
 
 
 def reset():
@@ -32,11 +41,9 @@ def reset():
 	word1="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs"
 
 def isstaff(checkedid):
-	for i in open("staff.txt"):
-		if str(i.split(" ")[0])==str(checkedid):
+	for i in open("staff.txt", "r"):
+		if str(i.rstrip("\n"))==str(checkedid):
 			return "verified"
-
-
 
 def formatok(amount):
 	#takes amount as string from message.content
@@ -75,7 +82,6 @@ def formatfromk(amount):
 colors=["A","B","C","D","E","F","0","1","2","3","4","5","6","7","8","9"]
 objects=[]
 word="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs"
-people=[]
 day=int(datetime.datetime.today().day)
 bananamode=False
 
@@ -90,16 +96,19 @@ async def my_background_task():
 		# sheet = client1.open("Points System").sheet1
 		# sheet.update_cell(27,27,"Authenticated")
 		# print("authenticated")
-		if int(day)!=int(datetime.datetime.today().day):
-			embed = discord.Embed(description="<@"+random.choice(people)+"> has won today's giveaway! DM <@199630284906430465> to claim your **1m**!", color=16724736)
+		c.execute("SELECT day FROM giveaway WHERE gnumber=1")
+		day=int(c.fetchone()[0])
+		if day!=int(datetime.datetime.today().day):
+			c.execute("SELECT people FROM giveaway WHERE gnumber=1")
+			people=str(c.fetchone()[0]).split("\n")
+			embed = discord.Embed(description=random.choice(people)+" has won today's giveaway! DM <@199630284906430465> to claim your **1m**!", color=16724736)
 			embed.set_author(name="Daily Holiday Giveaway", icon_url=str(member.avatar_url))
 			embed.set_footer(text="Provided by Scandal and Poet ;)")
 			await client.send_message(client.get_channel("510329148003319818"), embed=embed)
-			people=[]
-		day=int(datetime.datetime.today().day)
+			c.execute("UPDATE giveaway SET people={} WHERE gnumber=1".format(""))
+		c.execute("UPDATE giveaway SET day={} WHERE gnumber=1".format(int(datetime.datetime.today().day)))
+		conn.commit()
 		await asyncio.sleep(3600)
-
-
 
 
 @client.event
@@ -126,6 +135,8 @@ async def on_message(message):
 				sent = await client.send_message(message.channel, "18 naked cowboys in the showers at Ram Ranch! "+str(emoji)+" :shower:")
 				await client.add_reaction(sent, emoji)
 
+	if "<:goofygang:516421546500292608>" in message:
+		await client.delete_message(message)
 	# if bananamode==True:
 	# 	emoji = get(client.get_all_emojis(), name='jad')
 	# 	await client.add_reaction(message, emoji)
@@ -279,24 +290,38 @@ async def on_message(message):
 				await client.send_message(message.channel, "```css\nUse !guess (letter or word here) to guess a letter, or the whole word\nThe first person to guess the word correctly wins!\n\n"+(''.join(blank))+"\n\nIncorrect guesses left: "+str(guesses)+"\nPrevious incorrect guesses: "+", ".join(wrong)+"\n```")			
 	#################################################
 	elif message.content.startswith("!people"):
-		await client.send_message(message.channel, "```css\nThe following people have entered the daily giveaway: "+(', '.join(people))+"\n```")
+		if str(message.channel.id)=="499012338670764042":
+			c.execute("SELECT people FROM giveaway WHERE gnumber=1")
+			people=str(c.fetchone()[0])
+			embed = discord.Embed(description="The following people have entered the daily giveaway: "+people, color=8270499)
+			embed.set_author(name="Daily Giveaway Participants", icon_url=str(message.server.icon_url))
+			embed.set_footer(text="GL Mate")
+			await client.send_message(message.channel, embed=embed)
+		else:
+			await client.send_message(message.channel, "This command can only be used in <#499012338670764042>.")
 	###################################################
 	elif message.content.startswith("!giveaway"):
-		if str(message.author.id) not in people:
-			people.append(str(message.author.id))
-			await client.send_message(message.channel, "You have been entered in today's giveaway! If you win, dm <@199630284906430465> to claim your **1m**!")
+		c.execute("SELECT people FROM giveaway WHERE gnumber=1")
+		people=str(c.fetchone()[0])
+		if "<@"+str(message.author.id)+">" not in people:
+			c.execute("UPDATE giveaway SET people={} WHERE gnumber=1".format(str(people)+"\n<@"+str(message.author.id)+">"))
+			conn.commit()
+			await client.send_message(message.channel, "You have been entered in today's giveaway! If you win, dm Old Poet to claim your **1m**!")
 		else:
 			await client.send_message(message.channel, "You have already entered the daily giveaway for today!")
 	##################################################
-	elif message.content.startswith("!manualdraw"):
+	elif message.content.startswith("!draw"):
 		if isstaff(str(message.author.id))=="verified":
-			await client.send_message(client.get_channel("421064754266636298"), "The winner of the daily giveaway is <@"+str((message.server.get_member_named(random.choice(raffle))).id)+"> ! Contact <@375706874718191619> to claim your prize!")
+			c.execute("SELECT people FROM giveaway WHERE gnumber=1")
+			people=str(c.fetchone()[0]).split("\n")
+			await client.send_message(client.get_channel("421064754266636298"), "The winner of the daily giveaway is "str(random.choice(people))"! Contact <@199630284906430465> to claim your prize!")
 		else:
 			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
 	####################################################
 	elif message.content.startswith("!cleargiveaway"):
 		if isstaff(str(message.author.id))=="verified":
-			people=[]
+			c.execute("UPDATE giveaway SET people={} WHERE gnumber=1".format(""))
+			conn.commit()
 			await client.send_message(message.channel, "The daily giveaway has now been cleared.")
 		else:
 			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")

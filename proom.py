@@ -103,8 +103,14 @@ async def my_background_task():
 			people=str(c.fetchone()[0]).split("\n")
 			embed = discord.Embed(description=random.choice(people)+" has won today's giveaway! DM <@199630284906430465> to claim your **1m**!", color=16724736)
 			embed.set_author(name="Daily Holiday Giveaway", icon_url=str(member.avatar_url))
-			embed.set_footer(text="Provided by Scandal and Poet ;)")
+			embed.set_footer(text="Provided by Scandal, Poet, Victarion, and Partners ;)")
 			await client.send_message(client.get_channel("510329148003319818"), embed=embed)
+
+			client1 = gspread.authorize(creds)
+			sheet = client1.open("Party Room Donations").sheet1
+			for counter, i in enumerate(people):
+				sheet.update_cell(1+counter, 11+day, str(i))
+
 			c.execute("UPDATE giveaway SET people='{}' WHERE gnumber=1".format(""))
 		c.execute("UPDATE giveaway SET day='{}' WHERE gnumber=1".format(int(datetime.datetime.today().day)))
 		conn.commit()
@@ -319,6 +325,14 @@ async def on_message(message):
 		if isstaff(str(message.author.id))=="verified":
 			c.execute("SELECT people FROM giveaway WHERE gnumber=1")
 			people=str(c.fetchone()[0]).split("\n")
+			c.execute("SELECT day FROM giveaway WHERE gnumber=1")
+			day=int(c.fetchone()[0])
+
+			client1 = gspread.authorize(creds)
+			sheet = client1.open("Party Room Donations").sheet1
+			for counter, i in enumerate(people):
+				sheet.update_cell(1+counter, 11+day, str(i))
+
 			await client.send_message(message.server.get_channel("421064754266636298"), "The winner of the daily giveaway is "+str(random.choice(people))+"! Contact <@199630284906430465> to claim your prize!")
 		else:
 			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")

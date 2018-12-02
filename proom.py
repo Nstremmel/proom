@@ -98,6 +98,7 @@ async def my_background_task():
 		# print("authenticated")
 		c.execute("SELECT day FROM giveaway WHERE gnumber=1")
 		day=int(c.fetchone()[0])
+		print(day)
 		if day!=int(datetime.datetime.today().day):
 			c.execute("SELECT people FROM giveaway WHERE gnumber=1")
 			people=str(c.fetchone()[0]).split("\n")
@@ -333,7 +334,7 @@ async def on_message(message):
 			for counter, i in enumerate(people):
 				sheet.update_cell(1+counter, 11+day, str(i))
 
-			await client.send_message(message.server.get_channel(421064754266636298), "The winner of the daily giveaway is "+str(random.choice(people))+"! Contact <@199630284906430465> to claim your prize!")
+			await client.send_message(message.server.get_channel("510329148003319818"), "The winner of the daily giveaway is "+str(random.choice(people))+"! Contact <@199630284906430465> to claim your prize!")
 		else:
 			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
 	####################################################

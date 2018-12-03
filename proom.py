@@ -313,14 +313,17 @@ async def on_message(message):
 			await client.send_message(message.channel, "This command can only be used in <#499012338670764042>.")
 	###################################################
 	elif message.content.startswith("!giveaway"):
-		c.execute("SELECT people FROM giveaway WHERE gnumber=1")
-		people=str(c.fetchone()[0])
-		if "<@"+str(message.author.id)+">" not in people:
-			c.execute("UPDATE giveaway SET people='{}' WHERE gnumber=1".format((people+"\n<@"+str(message.author.id)+">")))
-			conn.commit()
-			await client.send_message(message.channel, "You have been entered in today's **1m** giveaway! Use `!people` to see who else is entered.")
+		if str(message.channel.id)=="499012338670764042":
+			c.execute("SELECT people FROM giveaway WHERE gnumber=1")
+			people=str(c.fetchone()[0])
+			if "<@"+str(message.author.id)+">" not in people:
+				c.execute("UPDATE giveaway SET people='{}' WHERE gnumber=1".format((people+"\n<@"+str(message.author.id)+">")))
+				conn.commit()
+				await client.send_message(message.channel, "You have been entered in today's **1m** giveaway! Use `!people` to see who else is entered.")
+			else:
+				await client.send_message(message.channel, "You have already entered the daily giveaway for today!")
 		else:
-			await client.send_message(message.channel, "You have already entered the daily giveaway for today!")
+			await client.send_message(message.channel, "This command can only be used in <#499012338670764042>.")
 	##################################################
 	elif message.content.startswith("!draw"):
 		if isstaff(str(message.author.id))=="verified":
@@ -334,7 +337,7 @@ async def on_message(message):
 			for counter, i in enumerate(people):
 				sheet.update_cell(1+counter, 11+day, str(i))
 
-			await client.send_message(message.server.get_channel("510329148003319818"), "The winner of the daily giveaway is "+str(random.choice(people))+"! Contact <@199630284906430465> to claim your prize!")
+			await client.send_message(message.server.get_channel("510329148003319818"), "The winner of the daily giveaway is "+str(random.choice(people))+"! Contact <@199630284906430465> to claim your **1m** 07!")
 		else:
 			await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
 	####################################################

@@ -530,11 +530,18 @@ async def on_message(message):
 		else:
 			await client.send_message(message.channel, "You don't currently have this role. Use `!notify-on` to add it.")
 	#################################################
+	elif message.content.startswith("!starttrivia"):
+		channel=client.get_channel((str(message.content).split(",")[0])[15:-1])
+		question=str(message.content).split(",")[1]
+		answer=str(message.content).split(",")[2]
+		await client.send_message(channel, question)
+		await client.send_message(channel, "Keep in mind the answer must be all lowercase!")
+		guess = await client.wait_for_message(timeout=30, channel=channel, content=(answer).lower())
+		if guess==None:
+			await client.send_message(channel, "Reeee, you took too long with no correct answer. Trivia ended.")
+		await client.send_message(channel, "<@"+str(guess.author.id)+"> has gotten the trivia correct!")
 
 
-
-
-	
 #client.loop.create_task(my_background_task())
 
 Bot_Token = os.environ['TOKEN']

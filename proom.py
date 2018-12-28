@@ -137,7 +137,7 @@ async def on_message(message):
 
 	if "ram ranch" in (message.content).lower():
 		if str(message.author.id)!="426579751583481857":
-			if str(message.channel.id)=="499012338670764042":
+			if str(message.channel.id)=="499012338670764042" or str(message.channel.id)=="511966876306374666":
 				emoji = get(client.get_all_emojis(), name='ramranch')
 				sent = await client.send_message(message.channel, "18 naked cowboys in the showers at Ram Ranch! "+str(emoji)+" :shower:")
 				await client.add_reaction(sent, emoji)
@@ -148,7 +148,7 @@ async def on_message(message):
 			await client.delete_message(message)
 
 	if "<@&511968689474633728>" in str(message.content):
-		if str(message.channel.id)=="499012338670764042":
+		if str(message.channel.id)=="499012338670764042" or str(message.channel.id)=="511966876306374666":
 			emoji = get(client.get_all_emojis(), name='goofygang')
 			sent = await client.send_message(message.channel, str(emoji)+"**Goofy Goobers Gucci Gang!**"+str(emoji))
 			await client.add_reaction(sent, emoji)

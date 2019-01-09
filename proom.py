@@ -540,6 +540,16 @@ async def on_message(message):
 		if guess==None:
 			await client.send_message(channel, "Reeee, you took too long with no correct answer. Trivia ended.")
 		await client.send_message(channel, "<@"+str(guess.author.id)+"> has gotten the trivia correct!")
+	####################################################
+	elif message.content.startswith("!purge"):
+		purged=int((message.content).split(" ")[1])
+		mod=get(message.server.roles, name='Moderator')
+		if mod in message.author.roles:
+			await client.purge_from(message.channel, limit=purged)
+			await client.send_message(message.channel, "Deleted **"+str(purged)+"** messages!")
+		else:
+			await client.send_message(message.channel, "You must have the Moderator role in order to use this command.")
+
 
 
 #client.loop.create_task(my_background_task())

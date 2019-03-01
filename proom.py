@@ -359,136 +359,136 @@ async def on_message(message):
 
 
 	#############################################
-	elif message.content.startswith("!donate"):
-		try:
-			client1 = gspread.authorize(creds)
-			sheet = client1.open("Party Room Donations").sheet1
-			donation=float(message.content[8:-1])
-			if donation<1 or str(message.content)[-1:].lower()=="k":
-				await client.send_message(message.channel, "Sorry the minimum donation amount is 1m.")
-			else:
-				if isinstance(donation, float):
-					if (donation).is_integer():
-						donation=int(donation)
-				donation=str(donation)+"M"
+	# elif message.content.startswith("!donate"):
+	# 	try:
+	# 		client1 = gspread.authorize(creds)
+	# 		sheet = client1.open("Party Room Donations").sheet1
+	# 		donation=float(message.content[8:-1])
+	# 		if donation<1 or str(message.content)[-1:].lower()=="k":
+	# 			await client.send_message(message.channel, "Sorry the minimum donation amount is 1m.")
+	# 		else:
+	# 			if isinstance(donation, float):
+	# 				if (donation).is_integer():
+	# 					donation=int(donation)
+	# 			donation=str(donation)+"M"
 
-				counter=0
-				while True:
-					if sheet.cell(counter+2, 1).value=="":
-						sheet.update_cell(counter+2, 1, str(message.author))
-						sheet.update_cell(counter+2, 2, donation)
-						sheet.update_cell(counter+2, 3, str(datetime.datetime.now())[:-7])
-						sheet.update_cell(counter+2, 4, "No")
-						await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". <@404408034694266881> will message you soon to collect your donation.")
-						break
-					else:
-						counter+=1
-		except:
-			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
+	# 			counter=0
+	# 			while True:
+	# 				if sheet.cell(counter+2, 1).value=="":
+	# 					sheet.update_cell(counter+2, 1, str(message.author))
+	# 					sheet.update_cell(counter+2, 2, donation)
+	# 					sheet.update_cell(counter+2, 3, str(datetime.datetime.now())[:-7])
+	# 					sheet.update_cell(counter+2, 4, "No")
+	# 					await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+donation+". <@404408034694266881> will message you soon to collect your donation.")
+	# 					break
+	# 				else:
+	# 					counter+=1
+	# 	except:
+	# 		await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
 	#############################################
-	elif message.content.startswith("!donate"):
-		try:
-			amount=(message.content).split(" ")[1]
-			if (amount[-1:]).lower()=="m":
-				donation=int(float(str(amount[:-1]))*1000)
-			elif (amount[-1:]).lower()=="k":
-				donation=int(str(amount[:-1]))
-			else:
-				donation=int(float(amount)*1000)
+	# elif message.content.startswith("!donate"):
+	# 	try:
+	# 		amount=(message.content).split(" ")[1]
+	# 		if (amount[-1:]).lower()=="m":
+	# 			donation=int(float(str(amount[:-1]))*1000)
+	# 		elif (amount[-1:]).lower()=="k":
+	# 			donation=int(str(amount[:-1]))
+	# 		else:
+	# 			donation=int(float(amount)*1000)
 
-			await client.send_message(message.server.get_channel("478634423718248449"), "<@"+str(message.author.id)+"> Has made a donation request of "+amount+".")
-			await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+amount+". A rank will message you soon to collect your donation.")
-		except:
-			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
-	#############################
-	elif message.content.startswith("!donations <@"):
-		try:
-			int(str(message.content).split(" ")[1][2:3])
-			member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
-		except:
-			member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
+	# 		await client.send_message(message.server.get_channel("478634423718248449"), "<@"+str(message.author.id)+"> Has made a donation request of "+amount+".")
+	# 		await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+amount+". A rank will message you soon to collect your donation.")
+	# 	except:
+	# 		await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
+	# #############################
+	# elif message.content.startswith("!donations <@"):
+	# 	try:
+	# 		int(str(message.content).split(" ")[1][2:3])
+	# 		member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
+	# 	except:
+	# 		member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
 
-		donations=getvalue(int(member.id), "donations")
-		if donations>=10000:
-			if len(str(donations))==5:
-				donations='{0:.4g}'.format(donations*0.001)+"M"
-			elif len(str(donations))==6:
-				donations='{0:.5g}'.format(donations*0.001)+"M"
-		else:
-			donations=str(donations)+"k"
+	# 	donations=getvalue(int(member.id), "donations")
+	# 	if donations>=10000:
+	# 		if len(str(donations))==5:
+	# 			donations='{0:.4g}'.format(donations*0.001)+"M"
+	# 		elif len(str(donations))==6:
+	# 			donations='{0:.5g}'.format(donations*0.001)+"M"
+	# 	else:
+	# 		donations=str(donations)+"k"
 
-		embed = discord.Embed(color=16771250)
-		embed.set_author(name=(str(member))[:-5]+"'s Total Donations", icon_url=str(member.avatar_url))
-		embed.add_field(name="Donations", value=donations, inline=True)
-		embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
-		await client.send_message(message.channel, embed=embed)
-	##########################
-	elif (message.content)==("!donations"):
-		donations=getvalue(int(message.author.id), "donations")
-		if donations>=10000:
-			if len(str(donations))==5:
-				donations='{0:.4g}'.format(donations*0.001)+"M"
-			elif len(str(donations))==6:
-				donations='{0:.5g}'.format(donations*0.001)+"M"
-		else:
-			donations=str(donations)+"k"
+	# 	embed = discord.Embed(color=16771250)
+	# 	embed.set_author(name=(str(member))[:-5]+"'s Total Donations", icon_url=str(member.avatar_url))
+	# 	embed.add_field(name="Donations", value=donations, inline=True)
+	# 	embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
+	# 	await client.send_message(message.channel, embed=embed)
+	# ##########################
+	# elif (message.content)==("!donations"):
+	# 	donations=getvalue(int(message.author.id), "donations")
+	# 	if donations>=10000:
+	# 		if len(str(donations))==5:
+	# 			donations='{0:.4g}'.format(donations*0.001)+"M"
+	# 		elif len(str(donations))==6:
+	# 			donations='{0:.5g}'.format(donations*0.001)+"M"
+	# 	else:
+	# 		donations=str(donations)+"k"
 
-		embed = discord.Embed(color=16771250)
-		embed.set_author(name=(str(message.author))[:-5]+"'s Total Donations", icon_url=str(message.author.avatar_url))
-		embed.add_field(name="Donations", value=donations, inline=True)
-		embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
-		await client.send_message(message.channel, embed=embed)
-	############################
-	elif message.content.startswith("!top donations"):
-		c.execute("SELECT * From rsmoney ORDER BY donations DESC LIMIT 10")
-		donors=c.fetchall()
-		words=""
-		for counter, i in enumerate(donors):
-			userid=i[0]
-			donation=i[4]
+	# 	embed = discord.Embed(color=16771250)
+	# 	embed.set_author(name=(str(message.author))[:-5]+"'s Total Donations", icon_url=str(message.author.avatar_url))
+	# 	embed.add_field(name="Donations", value=donations, inline=True)
+	# 	embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
+	# 	await client.send_message(message.channel, embed=embed)
+	# ############################
+	# elif message.content.startswith("!top donations"):
+	# 	c.execute("SELECT * From rsmoney ORDER BY donations DESC LIMIT 10")
+	# 	donors=c.fetchall()
+	# 	words=""
+	# 	for counter, i in enumerate(donors):
+	# 		userid=i[0]
+	# 		donation=i[4]
 
-			if donation>=10000:
-				if len(str(donation))==5:
-					donation='{0:.4g}'.format(donation*0.001)+"M"
-				elif len(str(donation))==6:
-					donation='{0:.5g}'.format(donation*0.001)+"M"
-			else:
-				donation=str(donation)+"k"
+	# 		if donation>=10000:
+	# 			if len(str(donation))==5:
+	# 				donation='{0:.4g}'.format(donation*0.001)+"M"
+	# 			elif len(str(donation))==6:
+	# 				donation='{0:.5g}'.format(donation*0.001)+"M"
+	# 		else:
+	# 			donation=str(donation)+"k"
 
-			words+=(str(counter+1)+". "+str(message.server.get_member(str(userid)))+" - "+donation+"\n\n")
+	# 		words+=(str(counter+1)+". "+str(message.server.get_member(str(userid)))+" - "+donation+"\n\n")
 
-		embed = discord.Embed(color=16771250, description=words)
-		embed.set_author(name="RSGiveaways Top Donations", icon_url=str(message.author.avatar_url))
-		embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
-		await client.send_message(message.channel, embed=embed)
-	#########################
-	elif message.content.startswith("!dupdate"):
-		try:
-			if (message.channel.id)=="478634423718248449":
-				amount=str(message.content).split(" ")[2]
+	# 	embed = discord.Embed(color=16771250, description=words)
+	# 	embed.set_author(name="RSGiveaways Top Donations", icon_url=str(message.author.avatar_url))
+	# 	embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
+	# 	await client.send_message(message.channel, embed=embed)
+	# #########################
+	# elif message.content.startswith("!dupdate"):
+	# 	try:
+	# 		if (message.channel.id)=="478634423718248449":
+	# 			amount=str(message.content).split(" ")[2]
 
-				if (amount[-1:]).lower()=="m":
-					donation=int(float(str(amount[:-1]))*1000)
-				elif (amount[-1:]).lower()=="k":
-					donation=int(str(amount[:-1]))
-				else:
-					donation=int(float(amount)*1000)
+	# 			if (amount[-1:]).lower()=="m":
+	# 				donation=int(float(str(amount[:-1]))*1000)
+	# 			elif (amount[-1:]).lower()=="k":
+	# 				donation=int(str(amount[:-1]))
+	# 			else:
+	# 				donation=int(float(amount)*1000)
 
-				try:
-					int(str(message.content).split(" ")[1][2:3])
-					member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
-				except:
-					member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
+	# 			try:
+	# 				int(str(message.content).split(" ")[1][2:3])
+	# 				member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
+	# 			except:
+	# 				member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
 
-				donations=getvalue(int(member.id), "donations")
-				c.execute("UPDATE rsmoney SET donations={} WHERE id={}".format(donations+donation, member.id))
-				conn.commit()
-				member=message.server.get_member(str(member.id))
-				await client.send_message(message.channel, str(member)+"'s donations have been updated.")
-			else:
-				None
-		except:
-			await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!dupdate (@user) (amount)`.")
+	# 			donations=getvalue(int(member.id), "donations")
+	# 			c.execute("UPDATE rsmoney SET donations={} WHERE id={}".format(donations+donation, member.id))
+	# 			conn.commit()
+	# 			member=message.server.get_member(str(member.id))
+	# 			await client.send_message(message.channel, str(member)+"'s donations have been updated.")
+	# 		else:
+	# 			None
+	# 	except:
+	# 		await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!dupdate (@user) (amount)`.")
 
 	##############################################
 	# elif message.content.startswith("!rules"):

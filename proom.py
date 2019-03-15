@@ -243,11 +243,13 @@ async def on_message(message):
 		await client.send_message(message.channel, finalmessage)
 	############################################
 	elif message.content.startswith("!poll"):
-		await client.delete_message(message)
-		sent = await client.send_message(message.channel, "```css\n"+str(message.content[6:])+"\n\nRespond below with 👍 for YES, 👎 for NO, or 🤔 for UNSURE/NEUTRAL\n```")
+		message.content=(message.content).title()
+		embed = discord.Embed(description="Respond below with 👍 for YES or 👎 for NO", color=16724721)
+		embed.set_author(name=str(message.content[6:]), icon_url=str(message.server.icon_url))
+		embed.set_footer(text="Polled on: "+str(datetime.datetime.now())[:-7])
+		sent = await client.send_message(message.channel, embed=embed)
 		await client.add_reaction(sent,"👍")
 		await client.add_reaction(sent,"👎")
-		await client.add_reaction(sent,"🤔")
 	#############################################
 	elif message.content.startswith("!userinfo"):
 		try:

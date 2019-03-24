@@ -124,12 +124,48 @@ async def on_ready():
 
 @client.event
 async def on_reaction_add(reaction, user):
-	None
+	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="559451251784417290":
+		if str(reaction.emoji)=="❗":
+			notify=get(reaction.message.server.roles, name='Notify')
+			if notify not in user.roles:
+				await client.add_roles(user, notify)
+		elif str(reaction.emoji)=="🎲":
+			games=get(reaction.message.server.roles, name='Games')
+			if games not in user.roles:
+				await client.add_roles(user, games)
+		elif str(reaction.emoji)=="🤑":
+			pvm=get(reaction.message.server.roles, name="PvM")
+			if pvm not in user.roles:
+				await client.add_roles(user, pvm)
+		elif str(reaction.emoji)=="♿":
+			ironman=get(reaction.message.server.roles, name="Ironman Btw")
+			if iron not in user.roles:
+				await client.add_roles(user, ironman)
+	else:
+		None
+
 
 @client.event
 async def on_reaction_remove(reaction, user):
-	if str(reaction.message.author.id)=="294882584201003009":
-		await client.send_message(reaction.message.server.get_channel("511587300136845317"), str(reaction.emoji)+" was removed by <@"+str(user.id)+">.")
+	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="559451251784417290":
+		if str(reaction.emoji)=="❗":
+			notify=get(reaction.message.server.roles, name='Notify')
+			if notify in user.roles:
+				await client.remove_roles(user, notify)
+		elif str(reaction.emoji)=="🎲":
+			games=get(reaction.message.server.roles, name='Games')
+			if games in user.roles:
+				await client.remove_roles(user, games)
+		elif str(reaction.emoji)=="🤑":
+			pvm=get(reaction.message.server.roles, name="PvM")
+			if pvm in user.roles:
+				await client.remove_roles(user, pvm)
+		elif str(reaction.emoji)=="♿":
+			ironman=get(reaction.message.server.roles, name="Ironman Btw")
+			if iron in user.roles:
+				await client.remove_roles(user, ironman)
+	else:
+		None
 
 @client.event
 async def on_message(message):
@@ -551,8 +587,16 @@ async def on_message(message):
 			await client.send_message(message.channel, "Deleted **"+str(purged)+"** messages!")
 		else:
 			await client.send_message(message.channel, "You must have the Moderator role in order to use this command.")
-
-
+	####################################################
+	elif message.content=="!reactions":
+		embed = discord.Embed(description="`React to this message with the given reaction to gain that role.`\n"+											"\nRoles: "+', '.join(roles)+"\n"+
+											"\n**Notify:** ❗\n"+
+											"\n**Games:** 🎲\n"+
+											"\n**PvM:** 🤑\n"+
+											"\n**IronMan:** ♿\n", color=16724721)
+		embed.set_author(name="Self Assigned Roles", icon_url=str(message.server.icon_url))
+		embed.set_footer(text="DM an Admin or Founder with ideas for new roles")
+		await client.send_message(message.channel, embed=embed)
 
 #client.loop.create_task(my_background_task())
 

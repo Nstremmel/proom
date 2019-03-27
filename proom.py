@@ -122,49 +122,49 @@ async def my_background_task():
 async def on_ready():
 	print("Bot Logged In!");
 
-# @client.event
-# async def on_reaction_add(reaction, user):
-# 	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="559451251784417290":
-# 		if str(reaction.emoji)=="❗":
-# 			notify=get(reaction.message.server.roles, name='Notify')
-# 			if notify not in user.roles:
-# 				await client.add_roles(user, notify)
-# 		elif str(reaction.emoji)=="🎲":
-# 			games=get(reaction.message.server.roles, name='Games')
-# 			if games not in user.roles:
-# 				await client.add_roles(user, games)
-# 		elif str(reaction.emoji)=="🤑":
-# 			pvm=get(reaction.message.server.roles, name="PvM")
-# 			if pvm not in user.roles:
-# 				await client.add_roles(user, pvm)
-# 		elif str(reaction.emoji)=="♿":
-# 			ironman=get(reaction.message.server.roles, name="Ironman Btw")
-# 			if iron not in user.roles:
-# 				await client.add_roles(user, ironman)
-# 	else:
-# 		None
+@client.event
+async def on_reaction_add(reaction, user):
+	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="559451251784417290":
+		if str(reaction.emoji)=="❗":
+			notify=get(reaction.message.server.roles, name='Notify')
+			if notify not in user.roles:
+				await client.add_roles(user, notify)
+		elif str(reaction.emoji)=="🎲":
+			games=get(reaction.message.server.roles, name='Games')
+			if games not in user.roles:
+				await client.add_roles(user, games)
+		elif str(reaction.emoji)=="🤑":
+			pvm=get(reaction.message.server.roles, name="PvM")
+			if pvm not in user.roles:
+				await client.add_roles(user, pvm)
+		elif str(reaction.emoji)=="♿":
+			ironman=get(reaction.message.server.roles, name="Ironman Btw")
+			if iron not in user.roles:
+				await client.add_roles(user, ironman)
+	else:
+		None
 
-# @client.event
-# async def on_reaction_remove(reaction, user):
-# 	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="559451251784417290":
-# 		if str(reaction.emoji)=="❗":
-# 			notify=get(reaction.message.server.roles, name='Notify')
-# 			if notify in user.roles:
-# 				await client.remove_roles(user, notify)
-# 		elif str(reaction.emoji)=="🎲":
-# 			games=get(reaction.message.server.roles, name='Games')
-# 			if games in user.roles:
-# 				await client.remove_roles(user, games)
-# 		elif str(reaction.emoji)=="🤑":
-# 			pvm=get(reaction.message.server.roles, name="PvM")
-# 			if pvm in user.roles:
-# 				await client.remove_roles(user, pvm)
-# 		elif str(reaction.emoji)=="♿":
-# 			ironman=get(reaction.message.server.roles, name="Ironman Btw")
-# 			if iron in user.roles:
-# 				await client.remove_roles(user, ironman)
-# 	else:
-# 		None
+@client.event
+async def on_reaction_remove(reaction, user):
+	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="559451251784417290":
+		if str(reaction.emoji)=="❗":
+			notify=get(reaction.message.server.roles, name='Notify')
+			if notify in user.roles:
+				await client.remove_roles(user, notify)
+		elif str(reaction.emoji)=="🎲":
+			games=get(reaction.message.server.roles, name='Games')
+			if games in user.roles:
+				await client.remove_roles(user, games)
+		elif str(reaction.emoji)=="🤑":
+			pvm=get(reaction.message.server.roles, name="PvM")
+			if pvm in user.roles:
+				await client.remove_roles(user, pvm)
+		elif str(reaction.emoji)=="♿":
+			ironman=get(reaction.message.server.roles, name="Ironman Btw")
+			if iron in user.roles:
+				await client.remove_roles(user, ironman)
+	else:
+		None
 
 @client.event
 async def on_message(message):
@@ -177,10 +177,10 @@ async def on_message(message):
 				sent = await client.send_message(message.channel, "18 naked cowboys in the showers at Ram Ranch! "+str(emoji)+" :shower:")
 				await client.add_reaction(sent, emoji)
 
-	# if ":goofygang:" in str(message.content):
-	# 	gang=get(message.server.roles, name='Goofy Gang')
-	# 	if gang not in message.author.roles:
-	# 		await client.delete_message(message)
+	if ":goofygang:" in str(message.content):
+		gang=get(message.server.roles, name='Goofy Gang')
+		if gang not in message.author.roles:
+			await client.delete_message(message)
 
 	if "<@&511968689474633728>" in str(message.content):
 		if str(message.channel.id)=="499012338670764042" or str(message.channel.id)=="511966876306374666":
@@ -286,26 +286,26 @@ async def on_message(message):
 		await client.add_reaction(sent,"👍")
 		await client.add_reaction(sent,"👎")
 	#############################################
-	# elif message.content.startswith("!userinfo"):
-	# 	try:
-	# 		int(str(message.content[12:13]))
-	# 		member=message.server.get_member(message.content[12:30])
-	# 	except:
-	# 		member=message.server.get_member(message.content[13:31])
-	# 	roles=[]
-	# 	for i in member.roles:
-	# 		if str(i)=="@everyone":
-	# 			roles.append("everyone")
-	# 		else:
-	# 			roles.append(i.name)
-	# 	embed = discord.Embed(description=" Name: "+str(member)+"\n"+
-	# 										"\nRoles: "+', '.join(roles)+"\n"+
-	# 										"\nJoined server on: "+str(member.joined_at).split(" ")[0]+"\n"+
-	# 										"\nCreated account on: "+str(member.created_at).split(" ")[0]+"\n"+
-	# 										"\nPlaying: "+str(member.game)+"\n", color=8270499)
-	# 	embed.set_author(name="Information of "+str(member)[:-5], icon_url=str(member.avatar_url))
-	# 	embed.set_footer(text="Spying on people's information isn't very nice...")
-	# 	await client.send_message(message.channel, embed=embed)
+	elif message.content.startswith("!userinfo"):
+		try:
+			int(str(message.content[12:13]))
+			member=message.server.get_member(message.content[12:30])
+		except:
+			member=message.server.get_member(message.content[13:31])
+		roles=[]
+		for i in member.roles:
+			if str(i)=="@everyone":
+				roles.append("everyone")
+			else:
+				roles.append(i.name)
+		embed = discord.Embed(description=" Name: "+str(member)+"\n"+
+											"\nRoles: "+', '.join(roles)+"\n"+
+											"\nJoined server on: "+str(member.joined_at).split(" ")[0]+"\n"+
+											"\nCreated account on: "+str(member.created_at).split(" ")[0]+"\n"+
+											"\nPlaying: "+str(member.game)+"\n", color=8270499)
+		embed.set_author(name="Information of "+str(member)[:-5], icon_url=str(member.avatar_url))
+		embed.set_footer(text="Spying on people's information isn't very nice...")
+		await client.send_message(message.channel, embed=embed)
 	##############################################
 	elif message.content.startswith("!start hangman"):
 		reset()
@@ -561,17 +561,17 @@ async def on_message(message):
 			await client.send_message(channel, "Reeee, you took too long with no correct answer. Trivia ended.")
 		await client.send_message(channel, "<@"+str(guess.author.id)+"> has gotten the trivia correct!")
 	####################################################
-	# elif message.content.startswith("!purge"):
-	# 	purged=int((message.content).split(" ")[1])
-	# 	mod=get(message.server.roles, name='Moderator')
-	# 	if mod in message.author.roles:
-	# 		await client.purge_from(message.channel, limit=purged)
-	# 		await client.send_message(message.channel, "Deleted **"+str(purged)+"** messages!")
-	# 	else:
-	# 		await client.send_message(message.channel, "You must have the Moderator role in order to use this command.")
+	elif message.content.startswith("!purge"):
+		purged=int((message.content).split(" ")[1])
+		mod=get(message.server.roles, name='Moderator')
+		if mod in message.author.roles:
+			await client.purge_from(message.channel, limit=purged)
+			await client.send_message(message.channel, "Deleted **"+str(purged)+"** messages!")
+		else:
+			await client.send_message(message.channel, "You must have the Moderator role in order to use this command.")
 	####################################################
 	elif message.content==("!reactions"):
-		embed = discord.Embed(description="`React to this message with the given reaction to gain that role.\n"+											"\nRoles: "+', '.join(roles)+"\n"+
+		embed = discord.Embed(description="`React to this message with the given reaction to gain that role.\n"+
 											"\n**Notify:** ❗\n"+
 											"\n**Games:** 🎲\n"+
 											"\n**PvM:** 🤑\n"+

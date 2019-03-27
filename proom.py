@@ -177,10 +177,10 @@ async def on_message(message):
 				sent = await client.send_message(message.channel, "18 naked cowboys in the showers at Ram Ranch! "+str(emoji)+" :shower:")
 				await client.add_reaction(sent, emoji)
 
-	if ":goofygang:" in str(message.content):
-		gang=get(message.server.roles, name='Goofy Gang')
-		if gang not in message.author.roles:
-			await client.delete_message(message)
+	# if ":goofygang:" in str(message.content):
+	# 	gang=get(message.server.roles, name='Goofy Gang')
+	# 	if gang not in message.author.roles:
+	# 		await client.delete_message(message)
 
 	if "<@&511968689474633728>" in str(message.content):
 		if str(message.channel.id)=="499012338670764042" or str(message.channel.id)=="511966876306374666":
@@ -561,14 +561,14 @@ async def on_message(message):
 			await client.send_message(channel, "Reeee, you took too long with no correct answer. Trivia ended.")
 		await client.send_message(channel, "<@"+str(guess.author.id)+"> has gotten the trivia correct!")
 	####################################################
-	elif message.content.startswith("!purge"):
-		purged=int((message.content).split(" ")[1])
-		mod=get(message.server.roles, name='Moderator')
-		if mod in message.author.roles:
-			await client.purge_from(message.channel, limit=purged)
-			await client.send_message(message.channel, "Deleted **"+str(purged)+"** messages!")
-		else:
-			await client.send_message(message.channel, "You must have the Moderator role in order to use this command.")
+	# elif message.content.startswith("!purge"):
+	# 	purged=int((message.content).split(" ")[1])
+	# 	mod=get(message.server.roles, name='Moderator')
+	# 	if mod in message.author.roles:
+	# 		await client.purge_from(message.channel, limit=purged)
+	# 		await client.send_message(message.channel, "Deleted **"+str(purged)+"** messages!")
+	# 	else:
+	# 		await client.send_message(message.channel, "You must have the Moderator role in order to use this command.")
 	####################################################
 	elif message.content==("!reactions"):
 		embed = discord.Embed(description="`React to this message with the given reaction to gain that role.\n"+											"\nRoles: "+', '.join(roles)+"\n"+

@@ -124,6 +124,8 @@ async def on_ready():
 
 @client.event
 async def on_reaction_add(reaction, user):
+	print(str(reaction.message.channel.id))
+	print(str(reaction.message.id))
 	if str(reaction.message.channel.id)=="559449631604342824" and str(reaction.message.id)=="560301934385430558":
 		print(str(reaction.emoji))
 		print(reaction.emoji)

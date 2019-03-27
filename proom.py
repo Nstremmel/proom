@@ -124,7 +124,7 @@ async def on_ready():
 
 @client.event
 async def on_reaction_add(reaction, user):
-	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="559451251784417290":
+	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="560301934385430558":
 		if str(reaction.emoji)=="❗":
 			notify=get(reaction.message.server.roles, name='Notify')
 			if notify not in user.roles:
@@ -146,7 +146,7 @@ async def on_reaction_add(reaction, user):
 
 @client.event
 async def on_reaction_remove(reaction, user):
-	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="559451251784417290":
+	if reaction.message.channel.id=="559449631604342824" and reaction.message.id=="560301934385430558":
 		if str(reaction.emoji)=="❗":
 			notify=get(reaction.message.server.roles, name='Notify')
 			if notify in user.roles:

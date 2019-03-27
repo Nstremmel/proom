@@ -571,7 +571,7 @@ async def on_message(message):
 			await client.send_message(message.channel, "You must have the Moderator role in order to use this command.")
 	####################################################
 	elif message.content==("!reactions"):
-		embed = discord.Embed(description="`React to this message with the given reaction to gain that role.\n"+
+		embed = discord.Embed(description="`React to this message with the given reaction to gain that role`\n"+
 											"\n**Notify:** ❗\n"+
 											"\n**Games:** 🎲\n"+
 											"\n**PvM:** 🤑\n"+

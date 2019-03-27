@@ -286,26 +286,26 @@ async def on_message(message):
 		await client.add_reaction(sent,"👍")
 		await client.add_reaction(sent,"👎")
 	#############################################
-	elif message.content.startswith("!userinfo"):
-		try:
-			int(str(message.content[12:13]))
-			member=message.server.get_member(message.content[12:30])
-		except:
-			member=message.server.get_member(message.content[13:31])
-		roles=[]
-		for i in member.roles:
-			if str(i)=="@everyone":
-				roles.append("everyone")
-			else:
-				roles.append(i.name)
-		embed = discord.Embed(description=" Name: "+str(member)+"\n"+
-											"\nRoles: "+', '.join(roles)+"\n"+
-											"\nJoined server on: "+str(member.joined_at).split(" ")[0]+"\n"+
-											"\nCreated account on: "+str(member.created_at).split(" ")[0]+"\n"+
-											"\nPlaying: "+str(member.game)+"\n", color=8270499)
-		embed.set_author(name="Information of "+str(member)[:-5], icon_url=str(member.avatar_url))
-		embed.set_footer(text="Spying on people's information isn't very nice...")
-		await client.send_message(message.channel, embed=embed)
+	# elif message.content.startswith("!userinfo"):
+	# 	try:
+	# 		int(str(message.content[12:13]))
+	# 		member=message.server.get_member(message.content[12:30])
+	# 	except:
+	# 		member=message.server.get_member(message.content[13:31])
+	# 	roles=[]
+	# 	for i in member.roles:
+	# 		if str(i)=="@everyone":
+	# 			roles.append("everyone")
+	# 		else:
+	# 			roles.append(i.name)
+	# 	embed = discord.Embed(description=" Name: "+str(member)+"\n"+
+	# 										"\nRoles: "+', '.join(roles)+"\n"+
+	# 										"\nJoined server on: "+str(member.joined_at).split(" ")[0]+"\n"+
+	# 										"\nCreated account on: "+str(member.created_at).split(" ")[0]+"\n"+
+	# 										"\nPlaying: "+str(member.game)+"\n", color=8270499)
+	# 	embed.set_author(name="Information of "+str(member)[:-5], icon_url=str(member.avatar_url))
+	# 	embed.set_footer(text="Spying on people's information isn't very nice...")
+	# 	await client.send_message(message.channel, embed=embed)
 	##############################################
 	elif message.content.startswith("!start hangman"):
 		reset()
@@ -571,7 +571,7 @@ async def on_message(message):
 			await client.send_message(message.channel, "You must have the Moderator role in order to use this command.")
 	####################################################
 	elif message.content==("!reactions"):
-		embed = discord.Embed(description="`React to this message with the given reaction to gain that role.`\n"+											"\nRoles: "+', '.join(roles)+"\n"+
+		embed = discord.Embed(description="`React to this message with the given reaction to gain that role.\n"+											"\nRoles: "+', '.join(roles)+"\n"+
 											"\n**Notify:** ❗\n"+
 											"\n**Games:** 🎲\n"+
 											"\n**PvM:** 🤑\n"+

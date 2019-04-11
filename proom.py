@@ -31,11 +31,12 @@ c=conn.cursor()
 # c.execute("INSERT INTO giveaway VALUES (%s, %s, %s)", (1, "", int(datetime.datetime.today().day)))
 # conn.commit()
 
-# c.execute("DROP TABLE rsmoney")
-c.execute("""CREATE TABLE donations (
+# c.execute("DROP TABLE donors")
+c.execute("""CREATE TABLE donors (
 				id bigint,
 				donations bigint
 				)""")
+conn.commit()
 
 
 def reset():
@@ -50,6 +51,17 @@ def isstaff(checkedid):
 	for i in open("staff.txt", "r"):
 		if str(i.rstrip("\n"))==str(checkedid):
 			return "verified"
+
+def getvalue(userid, column):
+	try:
+		c.execute("SELECT donations FROM donors WHERE id={}".format(userid))
+		tester=int(c.fetchone()[0])
+	except:
+		c.execute("INSERT INTO donors VALUES (%s, %s)", (int(userid), 0))
+		return 0
+
+	c.execute("SELECT {} FROM donors WHERE id={}".format(str(column), userid))
+	return int(c.fetchone()[0])
 
 def formatok(amount):
 	#takes amount as string from message.content
@@ -443,15 +455,9 @@ async def on_message(message):
 	#############################################
 	elif message.content.startswith("!donate"):
 		try:
-			amount=(message.content).split(" ")[1]
-			if (amount[-1:]).lower()=="m":
-				donation=int(float(str(amount[:-1]))*1000)
-			elif (amount[-1:]).lower()=="k":
-				donation=int(str(amount[:-1]))
-			else:
-				donation=int(float(amount)*1000)
-
-			await client.send_message(message.server.get_channel("478634423718248449"), "<@"+str(message.author.id)+"> Has made a donation request of "+amount+".")
+			amount=formatok((message.content).split(" ")[1])
+			amount=formatfromk(amount)
+			await client.send_message(message.server.get_channel("514771727818031104"), "<@"+str(message.author.id)+"> Has made a donation request of "+amount+".")
 			await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+amount+". A rank will message you soon to collect your donation.")
 		except:
 			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
@@ -463,14 +469,7 @@ async def on_message(message):
 		except:
 			member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
 
-		donations=getvalue(int(member.id), "donations")
-		if donations>=10000:
-			if len(str(donations))==5:
-				donations='{0:.4g}'.format(donations*0.001)+"M"
-			elif len(str(donations))==6:
-				donations='{0:.5g}'.format(donations*0.001)+"M"
-		else:
-			donations=str(donations)+"k"
+		donations=formatfromk(getvalue(int(member.id), "donations"))
 
 		embed = discord.Embed(color=16771250)
 		embed.set_author(name=(str(member))[:-5]+"'s Total Donations", icon_url=str(member.avatar_url))
@@ -479,14 +478,7 @@ async def on_message(message):
 		await client.send_message(message.channel, embed=embed)
 	###########################
 	elif (message.content)==("!donations"):
-		donations=getvalue(int(message.author.id), "donations")
-		if donations>=10000:
-			if len(str(donations))==5:
-				donations='{0:.4g}'.format(donations*0.001)+"M"
-			elif len(str(donations))==6:
-				donations='{0:.5g}'.format(donations*0.001)+"M"
-		else:
-			donations=str(donations)+"k"
+		donations=formatfromk(getvalue(int(message.author.id), "donations"))
 
 		embed = discord.Embed(color=16771250)
 		embed.set_author(name=(str(message.author))[:-5]+"'s Total Donations", icon_url=str(message.author.avatar_url))
@@ -500,16 +492,7 @@ async def on_message(message):
 		words=""
 		for counter, i in enumerate(donors):
 			userid=i[0]
-			donation=i[4]
-
-			if donation>=10000:
-				if len(str(donation))==5:
-					donation='{0:.4g}'.format(donation*0.001)+"M"
-				elif len(str(donation))==6:
-					donation='{0:.5g}'.format(donation*0.001)+"M"
-			else:
-				donation=str(donation)+"k"
-
+			donation=formatfromk(i[4])
 			words+=(str(counter+1)+". "+str(message.server.get_member(str(userid)))+" - "+donation+"\n\n")
 
 		embed = discord.Embed(color=16771250, description=words)
@@ -520,14 +503,7 @@ async def on_message(message):
 	elif message.content.startswith("!dupdate"):
 		try:
 			if (message.channel.id)=="478634423718248449":
-				amount=str(message.content).split(" ")[2]
-
-				if (amount[-1:]).lower()=="m":
-					donation=int(float(str(amount[:-1]))*1000)
-				elif (amount[-1:]).lower()=="k":
-					donation=int(str(amount[:-1]))
-				else:
-					donation=int(float(amount)*1000)
+				donation=str(message.content).split(" ")[2]
 
 				try:
 					int(str(message.content).split(" ")[1][2:3])

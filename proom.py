@@ -39,10 +39,10 @@ c=conn.cursor()
 # conn.commit()
 
 #c.execute("DROP TABLE todo")
-c.execute("""CREATE TABLE todo (
-				items text
-				)""")
-conn.commit()
+# c.execute("""CREATE TABLE todo (
+# 				items text
+# 				)""")
+# conn.commit()
 
 def reset():
 	global guesses,solved,blank,wrong,word1
@@ -497,7 +497,7 @@ async def on_message(message):
 		words=""
 		for counter, i in enumerate(donors):
 			userid=i[0]
-			donation=formatfromk(i[4])
+			donation=formatfromk(i[1])
 			words+=(str(counter+1)+". "+str(message.server.get_member(str(userid)))+" - "+donation+"\n\n")
 
 		embed = discord.Embed(color=16724721, description=words)
@@ -507,22 +507,17 @@ async def on_message(message):
 	#########################
 	elif message.content.startswith("!dupdate"):
 		try:
-			if (message.channel.id)=="478634423718248449":
-				donation=str(message.content).split(" ")[2]
+			try:
+				int(str(message.content).split(" ")[1][2:3])
+				member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
+			except:
+				member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
 
-				try:
-					int(str(message.content).split(" ")[1][2:3])
-					member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
-				except:
-					member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
-
-				donations=getvalue(int(member.id), "donations")
-				c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
-				conn.commit()
-				member=message.server.get_member(str(member.id))
-				await client.send_message(message.channel, str(member)+"'s donations have been updated.")
-			else:
-				None
+			donation=formatok(str(message.content).split(" ")[2])
+			donations=getvalue(int(member.id), "donations")
+			c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
+			conn.commit()
+			await client.send_message(message.channel, "<@"+str(member.id)+">'s donations have been updated.")
 		except:
 			await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!dupdate (@user) (amount)`.")
 

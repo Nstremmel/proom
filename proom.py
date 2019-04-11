@@ -38,6 +38,11 @@ c.execute("""CREATE TABLE donors (
 				)""")
 conn.commit()
 
+#c.execute("DROP TABLE todo")
+c.execute("""CREATE TABLE todo (
+				items text
+				)""")
+conn.commit()
 
 def reset():
 	global guesses,solved,blank,wrong,word1
@@ -487,7 +492,7 @@ async def on_message(message):
 		await client.send_message(message.channel, embed=embed)
 	#############################
 	elif message.content.startswith("!top donations"):
-		c.execute("SELECT * From rsmoney ORDER BY donations DESC LIMIT 10")
+		c.execute("SELECT * From donors ORDER BY donations DESC LIMIT 10")
 		donors=c.fetchall()
 		words=""
 		for counter, i in enumerate(donors):
@@ -495,7 +500,7 @@ async def on_message(message):
 			donation=formatfromk(i[4])
 			words+=(str(counter+1)+". "+str(message.server.get_member(str(userid)))+" - "+donation+"\n\n")
 
-		embed = discord.Embed(color=16771250, description=words)
+		embed = discord.Embed(color=16724721, description=words)
 		embed.set_author(name="Party Room Top Donations", icon_url=str(message.server.icon_url))
 		embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
 		await client.send_message(message.channel, embed=embed)
@@ -512,7 +517,7 @@ async def on_message(message):
 					member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
 
 				donations=getvalue(int(member.id), "donations")
-				c.execute("UPDATE rsmoney SET donations={} WHERE id={}".format(donations+donation, member.id))
+				c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
 				conn.commit()
 				member=message.server.get_member(str(member.id))
 				await client.send_message(message.channel, str(member)+"'s donations have been updated.")

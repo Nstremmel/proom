@@ -52,9 +52,10 @@ def reset():
 	wrong=[]
 	word1="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs"
 
-def isstaff(checkedid):
-	for i in open("staff.txt", "r"):
-		if str(i.rstrip("\n"))==str(checkedid):
+def isstaff(checkedid,serverroles,authorroles):
+	for i in open("staff.txt"):
+		role=get(serverroles, name=str(i.strip()))
+		if role in authorroles:
 			return "verified"
 
 def getvalue(userid, column):
@@ -498,7 +499,7 @@ async def on_message(message):
 		for counter, i in enumerate(donors):
 			userid=i[0]
 			donation=formatfromk(i[1])
-			words+=(str(counter+1)+". "+str(message.server.get_member(str(userid)))+" - "+donation+"\n\n")
+			words+=(str(counter+1)+". <@"+str(userid)+"> - "+donation+"\n\n")
 
 		embed = discord.Embed(color=16724721, description=words)
 		embed.set_author(name="Party Room Top Donations", icon_url=str(message.server.icon_url))
@@ -507,17 +508,20 @@ async def on_message(message):
 	#########################
 	elif message.content.startswith("!dupdate"):
 		try:
-			try:
-				int(str(message.content).split(" ")[1][2:3])
-				member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
-			except:
-				member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
+			if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
+				try:
+					int(str(message.content).split(" ")[1][2:3])
+					member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
+				except:
+					member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
 
-			donation=formatok(str(message.content).split(" ")[2])
-			donations=getvalue(int(member.id), "donations")
-			c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
-			conn.commit()
-			await client.send_message(message.channel, "<@"+str(member.id)+">'s donations have been updated.")
+				donation=formatok(str(message.content).split(" ")[2])
+				donations=getvalue(int(member.id), "donations")
+				c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
+				conn.commit()
+				await client.send_message(message.channel, "<@"+str(member.id)+">'s donations have been updated.")
+			else:
+				await client.send_message(message.channel, "Staff only command!")
 		except:
 			await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!dupdate (@user) (amount)`.")
 
@@ -573,7 +577,8 @@ async def on_message(message):
 		embed.set_author(name="Self Assigned Roles", icon_url=str(message.server.icon_url))
 		embed.set_footer(text="DM an Admin or Founder with ideas for new roles")
 		await client.send_message(message.channel, embed=embed)
-
+	#####################################################
+	elif message.content==""
 #client.loop.create_task(my_background_task())
 
 Bot_Token = os.environ['TOKEN']

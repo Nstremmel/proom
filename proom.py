@@ -32,11 +32,11 @@ c=conn.cursor()
 # conn.commit()
 
 # c.execute("DROP TABLE donors")
-c.execute("""CREATE TABLE donors (
-				id bigint,
-				donations bigint
-				)""")
-conn.commit()
+# c.execute("""CREATE TABLE donors (
+# 				id bigint,
+# 				donations bigint
+# 				)""")
+# conn.commit()
 
 #c.execute("DROP TABLE todo")
 c.execute("""CREATE TABLE todo (

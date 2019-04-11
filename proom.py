@@ -578,7 +578,8 @@ async def on_message(message):
 		embed.set_footer(text="DM an Admin or Founder with ideas for new roles")
 		await client.send_message(message.channel, embed=embed)
 	#####################################################
-	elif message.content==""
+	elif message.content=="sdfgsdfg":
+		None
 #client.loop.create_task(my_background_task())
 
 Bot_Token = os.environ['TOKEN']

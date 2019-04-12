@@ -582,7 +582,7 @@ async def on_message(message):
 	#####################################################
 	elif message.content.startswith("!add"):
 		if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
-			event=" ◦ "str(message.content)[5:]+"\n\n"
+			event=" ◦ "+str(message.content)[5:]+"\n\n"
 			c.execute("SELECT items from todo")
 			todolist=str(c.fetchone()[0])
 			c.execute("UPDATE todo SET items={}".format(todolist+event))

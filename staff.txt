@@ -1,2 +1,4 @@
 Founder
 Admin
+Moderator
+CC Moderator

@@ -22,7 +22,7 @@ DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 c=conn.cursor()
 
-#c.execute("DROP TABLE data")
+#c.execute("DROP TABLE giveaway")
 # c.execute("""CREATE TABLE giveaway (
 # 				gnumber int,
 # 				people text,
@@ -423,8 +423,9 @@ async def on_message(message):
 	# 		await client.send_message(message.channel, "You do not have permissions to use that command. Contact <@199630284906430465> if this is a mistake.")
 	###################################################
 	elif message.content.startswith("!say"):
-		await client.edit_profile(avatar=message.author.avatar_url, username=str(message.author.nick))
-		print (str(message.author.avatar_url))
+		await client.edit_profile(avatar=str(message.author.avatar_url), username=str(message.author.nick))
+		await client.send_message(message.channel, str(message.content)[5:])
+		await client.edit_profile(avatar="https://cdn.discordapp.com/attachments/429102082461532160/566075329286897678/proom.png", username="Party Room Bot")
 
 
 
@@ -573,18 +574,37 @@ async def on_message(message):
 											"\n**Notify:** ❗\n"+
 											"\n**Games:** 🎲\n"+
 											"\n**PvM:** 🤑\n"+
+											"\n**PvP:** ⚔\n"+
 											"\n**IronMan:** ♿\n", color=16724721)
 		embed.set_author(name="Self Assigned Roles", icon_url=str(message.server.icon_url))
 		embed.set_footer(text="DM an Admin or Founder with ideas for new roles")
 		await client.send_message(message.channel, embed=embed)
 	#####################################################
-	elif message.content=="sdfgsdfg":
-		None
+	elif message.content.startswith("!add"):
+		if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
+			event=" ◦ "str(message.content)[5:]+"\n\n"
+			c.execute("SELECT items from todo")
+			todolist=str(c.fetchone()[0])
+			c.execute("UPDATE todo SET items={}".format(todolist+event))
+			conn.commit()
+			embed = discord.Embed(description="Item succesfully added to the to-do list! Use `!to-do` to check the list.", color=16724721)
+			embed.set_author(name="To-Do List", icon_url=str(message.server.icon_url))
+			await client.send_message(message.channel, embed=embed)
+		else:
+			await client.send_message(message.channel, "Only staff can add items to the to-do list.")
+	###################################
+	elif message.content=="!to-do":
+		c.execute("SELECT items from todo")
+		todolist=str(c.fetchone()[0])
+		embed = discord.Embed(description=todolist, color=16724721)
+		embed.set_author(name="Party Room To-Do List", icon_url=str(message.server.icon_url))
+		await client.send_message(message.channel, embed=embed)
+	####################################
+
 #client.loop.create_task(my_background_task())
 
 Bot_Token = os.environ['TOKEN']
 client.run(str(Bot_Token))
 
+#heroku pg:psql postgresql-parallel-32153 --app discord-host
 #https://discordapp.com/oauth2/authorize?client_id=426579751583481857&scope=bot&permissions=0
-
-

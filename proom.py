@@ -582,7 +582,7 @@ async def on_message(message):
 	#####################################################
 	elif message.content.startswith("!add"):
 		if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
-			event=" ◦ "+str(message.content)[5:]+"\n\n"
+			event=str(message.content)[5:]+"\n\n|"
 			c.execute("SELECT items from todo")
 			todolist=str(c.fetchone()[0])
 			c.execute("UPDATE todo SET items='{}'".format(todolist+event))
@@ -596,10 +596,22 @@ async def on_message(message):
 	elif message.content=="!to-do":
 		c.execute("SELECT items from todo")
 		todolist=str(c.fetchone()[0])
-		embed = discord.Embed(description=todolist, color=16724721)
+		printed=""
+		for counter, i in enumerate(todolist.split("|")):
+			printed+=(str(counter+1)+". "+i)
+		embed = discord.Embed(description=printed, color=16724721)
 		embed.set_author(name="Party Room To-Do List", icon_url=str(message.server.icon_url))
 		await client.send_message(message.channel, embed=embed)
 	####################################
+	elif message.content.startswith("!checkoff"):
+		if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
+			number=int((message.content).split(" ")[1])
+			c.execute("SELECT items from todo")
+			todolist=str(c.fetchone()[0])
+		else:
+			await client.send_message(message.channel, "Only staff can remove items from the to-do list.")
+
+
 
 #client.loop.create_task(my_background_task())
 

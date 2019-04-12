@@ -585,7 +585,7 @@ async def on_message(message):
 			event=" ◦ "+str(message.content)[5:]+"\n\n"
 			c.execute("SELECT items from todo")
 			todolist=str(c.fetchone()[0])
-			c.execute("UPDATE todo SET items={}".format(todolist+event))
+			c.execute("UPDATE todo SET items='{}'".format(todolist+event))
 			conn.commit()
 			embed = discord.Embed(description="Item succesfully added to the to-do list! Use `!to-do` to check the list.", color=16724721)
 			embed.set_author(name="To-Do List", icon_url=str(message.server.icon_url))

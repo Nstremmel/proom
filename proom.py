@@ -598,7 +598,10 @@ async def on_message(message):
 		todolist=str(c.fetchone()[0])
 		printed=""
 		for counter, i in enumerate(todolist.split("|")):
-			printed+=(str(counter+1)+". "+i)
+			if i=="":
+				pass
+			else:
+				printed+=(str(counter+1)+". "+i)
 		embed = discord.Embed(description=printed, color=16724721)
 		embed.set_author(name="Party Room To-Do List", icon_url=str(message.server.icon_url))
 		await client.send_message(message.channel, embed=embed)

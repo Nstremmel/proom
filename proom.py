@@ -38,11 +38,12 @@ c=conn.cursor()
 # 				)""")
 # conn.commit()
 
-#c.execute("DROP TABLE todo")
-# c.execute("""CREATE TABLE todo (
-# 				items text
-# 				)""")
-# conn.commit()
+c.execute("DROP TABLE todo")
+c.execute("""CREATE TABLE data (
+				items text,
+				chest
+				)""")
+conn.commit()
 
 def reset():
 	global guesses,solved,blank,wrong,word1
@@ -518,6 +519,8 @@ async def on_message(message):
 
 				donation=formatok(str(message.content).split(" ")[2])
 				donations=getvalue(int(member.id), "donations")
+				if donation+donations>=5000:
+					
 				c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
 				conn.commit()
 				await client.send_message(message.channel, "<@"+str(member.id)+">'s donations have been updated.")
@@ -583,9 +586,9 @@ async def on_message(message):
 	elif message.content.startswith("!add"):
 		if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
 			event=str(message.content)[5:]+"\n\n|"
-			c.execute("SELECT items from todo")
+			c.execute("SELECT items from data")
 			todolist=str(c.fetchone()[0])
-			c.execute("UPDATE todo SET items='{}'".format(todolist+event))
+			c.execute("UPDATE data SET items='{}'".format(todolist+event))
 			conn.commit()
 			embed = discord.Embed(description="Item succesfully added to the to-do list! Use `!to-do` to check the list.", color=16724721)
 			embed.set_author(name="To-Do List", icon_url=str(message.server.icon_url))
@@ -594,14 +597,14 @@ async def on_message(message):
 			await client.send_message(message.channel, "Only staff can add items to the to-do list.")
 	###################################
 	elif message.content=="!to-do":
-		c.execute("SELECT items from todo")
+		c.execute("SELECT items from data")
 		todolist=str(c.fetchone()[0])
 		printed=""
 		for counter, i in enumerate(todolist.split("|")):
 			if i=="":
 				pass
 			else:
-				printed+=(str(counter+1)+". "+i)
+				printed+="**"+(str(counter+1)+".** `"+i+"`")
 		embed = discord.Embed(description=printed, color=16724721)
 		embed.set_author(name="Party Room To-Do List", icon_url=str(message.server.icon_url))
 		await client.send_message(message.channel, embed=embed)
@@ -609,12 +612,32 @@ async def on_message(message):
 	elif message.content.startswith("!checkoff"):
 		if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
 			number=int((message.content).split(" ")[1])
-			c.execute("SELECT items from todo")
+			c.execute("SELECT items from data")
 			todolist=str(c.fetchone()[0])
 		else:
 			await client.send_message(message.channel, "Only staff can remove items from the to-do list.")
-
-
+	#####################################
+	elif message.content==("!chest"):
+		c.execute("SELECT items from data")
+		chest=formatfromk(str(c.fetchone()[0]))
+		embed = discord.Embed(description="The Party Room Community Chest currently holds: __**"+chest+"**__", color=16724721)
+		embed.set_author(name="Party Room Community Chest", icon_url=str(message.server.icon_url))
+		embed.set_image(url="http://img2.wikia.nocookie.net/__cb20111125181201/runescape/images/a/a8/Mahogany_prize_chest_POH.png")
+		await client.send_message(message.channel, embed=embed)
+	####################################
+	elif message.content.startswith("!chestupdate"):
+		if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
+			amount=formatok((message.content).split(" ")[1])
+			c.execute("SELECT chest from data")
+			chest=int(c.fetchone()[0])
+			c.execute("UPDATE data SET chest={}".format(chest+amount))
+			conn.commit()
+			embed = discord.Embed(description="Chest has been updated! Use `!chest` to check the chest contents.", color=16724721)
+			embed.set_author(name="Community Chest Update", icon_url=str(message.server.icon_url))
+			await client.send_message(message.channel, embed=embed)
+		else:
+			await client.send_message(message.channel, "Only staff can update the community chest.")
+	#####################################
 
 #client.loop.create_task(my_background_task())
 

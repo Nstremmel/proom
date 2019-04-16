@@ -622,7 +622,7 @@ async def on_message(message):
 		chest=formatfromk(int(c.fetchone()[0]))
 		embed = discord.Embed(description="The Party Room Community Chest currently holds: __**"+chest+"**__", color=16724721)
 		embed.set_author(name="Party Room Community Chest", icon_url=str(message.server.icon_url))
-		embed.set_image(url="http://img2.wikia.nocookie.net/__cb20111125181201/runescape/images/a/a8/Mahogany_prize_chest_POH.png")
+		embed.set_thumbnail(url="http://img2.wikia.nocookie.net/__cb20111125181201/runescape/images/a/a8/Mahogany_prize_chest_POH.png")
 		await client.send_message(message.channel, embed=embed)
 	####################################
 	elif message.content.startswith("!chestupdate"):

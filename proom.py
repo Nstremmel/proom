@@ -41,7 +41,7 @@ c=conn.cursor()
 # c.execute("DROP TABLE data")
 # c.execute("""CREATE TABLE data (
 # 				items text,
-# 				chest
+# 				chest bigint
 # 				)""")
 # conn.commit()
 
@@ -618,7 +618,7 @@ async def on_message(message):
 			await client.send_message(message.channel, "Only staff can remove items from the to-do list.")
 	#####################################
 	elif message.content==("!chest"):
-		c.execute("SELECT items from data")
+		c.execute("SELECT chest from data")
 		chest=formatfromk(str(c.fetchone()[0]))
 		embed = discord.Embed(description="The Party Room Community Chest currently holds: __**"+chest+"**__", color=16724721)
 		embed.set_author(name="Party Room Community Chest", icon_url=str(message.server.icon_url))

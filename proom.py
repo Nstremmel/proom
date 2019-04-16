@@ -38,12 +38,12 @@ c=conn.cursor()
 # 				)""")
 # conn.commit()
 
-c.execute("DROP TABLE todo")
-c.execute("""CREATE TABLE data (
-				items text,
-				chest
-				)""")
-conn.commit()
+# c.execute("DROP TABLE data")
+# c.execute("""CREATE TABLE data (
+# 				items text,
+# 				chest
+# 				)""")
+# conn.commit()
 
 def reset():
 	global guesses,solved,blank,wrong,word1
@@ -519,7 +519,7 @@ async def on_message(message):
 
 				donation=formatok(str(message.content).split(" ")[2])
 				donations=getvalue(int(member.id), "donations")
-				if donation+donations>=5000:
+				#if donation+donations>=5000:
 					
 				c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
 				conn.commit()

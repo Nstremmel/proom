@@ -527,19 +527,19 @@ async def on_message(message):
 				five=get(message.server.roles, name='💰Donator - 5m')
 				if five not in message.author.roles:
 					await client.add_roles(message.author, five)
-			elif donation+donations>=10000:
+			if donation+donations>=10000:
 				ten=get(message.server.roles, name='💰Donator - 10m')
 				if ten not in message.author.roles:
 					await client.add_roles(message.author, ten)
-			elif donation+donations>=25000:
+			if donation+donations>=25000:
 				tf=get(message.server.roles, name='💰Donator - 25m')
 				if tf not in message.author.roles:
 					await client.add_roles(message.author, tf)
-			elif donation+donations>=50000:
+			if donation+donations>=50000:
 				fifty=get(message.server.roles, name='💰Donator - 50m')
 				if fifty not in message.author.roles:
 					await client.add_roles(message.author, fifty)
-			elif donation+donations>=100000:
+			if donation+donations>=100000:
 				hundred=get(message.server.roles, name='💰Donator - 100m')
 				if hundred not in message.author.roles:
 					await client.add_roles(message.author, hundred)

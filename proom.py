@@ -512,49 +512,49 @@ async def on_message(message):
 		await client.send_message(message.channel, embed=embed)
 	#########################
 	elif message.content.startswith("!dupdate"):
-		try:
-			if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
-				try:
-					int(str(message.content).split(" ")[1][2:3])
-					member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
-				except:
-					member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
+		#try:
+		if isstaff(message.author.id, message.server.roles, message.author.roles)=="verified":
+			try:
+				int(str(message.content).split(" ")[1][2:3])
+				member=message.server.get_member(str(message.content).split(" ")[1][2:-1])
+			except:
+				member=message.server.get_member(str(message.content).split(" ")[1][3:-1])
 
-				donation=formatok(str(message.content).split(" ")[2])
-				donations=getvalue(int(member.id), "donations")
+			donation=formatok(str(message.content).split(" ")[2])
+			donations=getvalue(int(member.id), "donations")
 
-				if donation+donations>=5000:
-					five=get(message.server.roles, name='💰Donator - 5m')
-					if five not in message.author.roles:
-						await client.add_roles(message.author, five)
-				if donation+donations>=10000:
-					ten=get(message.server.roles, name='💰Donator - 10m')
-					if ten not in message.author.roles:
-						await client.add_roles(message.author, ten)
-				if donation+donations>=25000:
-					tf=get(message.server.roles, name='💰Donator - 25m')
-					if tf not in message.author.roles:
-						await client.add_roles(message.author, tf)
-				if donation+donations>=50000:
-					fifty=get(message.server.roles, name='💰Donator - 50m')
-					if fifty not in message.author.roles:
-						await client.add_roles(message.author, fifty)
-				if donation+donations>=75000:
-					sf=get(message.server.roles, name='💰Donator - 75m')
-					if sf not in message.author.roles:
-						await client.add_roles(message.author, sf)
-				if donation+donations>=100000:
-					hundred=get(message.server.roles, name='💰Donator - 100m')
-					if hundred not in message.author.roles:
-						await client.add_roles(message.author, hundred)
+			if donation+donations>=5000:
+				five=get(message.server.roles, name='💰Donator - 5m')
+				if five not in message.author.roles:
+					await client.add_roles(message.author, five)
+			if donation+donations>=10000:
+				ten=get(message.server.roles, name='💰Donator - 10m')
+				if ten not in message.author.roles:
+					await client.add_roles(message.author, ten)
+			if donation+donations>=25000:
+				tf=get(message.server.roles, name='💰Donator - 25m')
+				if tf not in message.author.roles:
+					await client.add_roles(message.author, tf)
+			if donation+donations>=50000:
+				fifty=get(message.server.roles, name='💰Donator - 50m')
+				if fifty not in message.author.roles:
+					await client.add_roles(message.author, fifty)
+			if donation+donations>=75000:
+				sf=get(message.server.roles, name='💰Donator - 75m')
+				if sf not in message.author.roles:
+					await client.add_roles(message.author, sf)
+			if donation+donations>=100000:
+				hundred=get(message.server.roles, name='💰Donator - 100m')
+				if hundred not in message.author.roles:
+					await client.add_roles(message.author, hundred)
 
-				c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
-				conn.commit()
-				await client.send_message(message.channel, "<@"+str(member.id)+">'s donations have been updated.")
-			else:
-				await client.send_message(message.channel, "Staff only command!")
-		except:
-			await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!dupdate (@user) (amount)`.")
+			c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
+			conn.commit()
+			await client.send_message(message.channel, "<@"+str(member.id)+">'s donations have been updated.")
+		else:
+			await client.send_message(message.channel, "Staff only command!")
+		#except:
+		#	await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!dupdate (@user) (amount)`.")
 
 	##############################################
 	# elif message.content.startswith("!rules"):

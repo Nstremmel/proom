@@ -464,9 +464,12 @@ async def on_message(message):
 	elif message.content.startswith("!donate"):
 		try:
 			amount=formatok((message.content).split(" ")[1])
-			amount=formatfromk(amount)
-			await client.send_message(message.server.get_channel("514771727818031104"), "<@"+str(message.author.id)+"> Has made a donation request of "+amount+".")
-			await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+amount+". A rank will message you soon to collect your donation.")
+			if amount<1000:
+				await client.send_message(message.channel, "There is a minimum donation amount of **1M**.")
+			else:
+				amount=formatfromk(amount)
+				await client.send_message(message.server.get_channel("514771727818031104"), "<@"+str(message.author.id)+"> Has made a donation request of "+amount+".")
+				await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+amount+". A rank will message you soon to collect your donation.")
 		except:
 			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
 	##############################
@@ -487,16 +490,16 @@ async def on_message(message):
 	###########################
 	elif (message.content)==("!donations"):
 		donations=formatfromk(getvalue(int(message.author.id), "donations"))
-
 		embed = discord.Embed(color=16771250)
 		embed.set_author(name=(str(message.author))[:-5]+"'s Total Donations", icon_url=str(message.author.avatar_url))
 		embed.add_field(name="Donations", value=donations, inline=True)
 		embed.set_footer(text="Donations checked on: "+str(datetime.datetime.now())[:-7])
 		await client.send_message(message.channel, embed=embed)
 	#############################
-	elif message.content.startswith("!top donations"):
-		c.execute("SELECT * From donors ORDER BY donations DESC LIMIT 10")
-		donors=c.fetchall()
+	elif message.content.startswith("!top"):
+		if message.content==("!top donations"):
+			c.execute("SELECT * From donors ORDER BY donations DESC LIMIT 10")
+			donors=c.fetchall()
 		words=""
 		for counter, i in enumerate(donors):
 			userid=i[0]
@@ -519,8 +522,28 @@ async def on_message(message):
 
 				donation=formatok(str(message.content).split(" ")[2])
 				donations=getvalue(int(member.id), "donations")
-				#if donation+donations>=5000:
-					
+				
+				if donation+donations>=5000:
+					five=get(reaction.message.server.roles, name='💰Donator - 5m')
+					if five not in message.author.roles:
+						await client.add_roles(message.author, five)
+				elif donation+donations>=10000:
+					ten=get(reaction.message.server.roles, name='💰Donator - 10m')
+					if ten not in message.author.roles:
+						await client.add_roles(message.author, ten)
+				elif donation+donations>=25000:
+					tf=get(reaction.message.server.roles, name='💰Donator - 25m')
+					if tf not in message.author.roles:
+						await client.add_roles(message.author, tf)
+				elif donation+donations>=50000:
+					fifty=get(reaction.message.server.roles, name='💰Donator - 50m')
+					if fifty not in message.author.roles:
+						await client.add_roles(message.author, fifty)
+				elif donation+donations>=100000:
+					hundred=get(reaction.message.server.roles, name='💰Donator - 100m')
+					if hundred not in message.author.roles:
+						await client.add_roles(message.author, hundred)
+
 				c.execute("UPDATE donors SET donations={} WHERE id={}".format(donations+donation, member.id))
 				conn.commit()
 				await client.send_message(message.channel, "<@"+str(member.id)+">'s donations have been updated.")
@@ -604,7 +627,7 @@ async def on_message(message):
 			if i=="":
 				pass
 			else:
-				printed+="**"+(str(counter+1)+".** `"+i+"`")
+				printed+="**"+(str(counter+1)+".** "+i)
 		embed = discord.Embed(description=printed, color=16724721)
 		embed.set_author(name="Party Room To-Do List", icon_url=str(message.server.icon_url))
 		await client.send_message(message.channel, embed=embed)
@@ -638,6 +661,10 @@ async def on_message(message):
 		else:
 			await client.send_message(message.channel, "Only staff can update the community chest.")
 	#####################################
+	elif message.content.startswith("!giveroles"):
+		notify=get(reaction.message.server.roles, name='Notify')
+		if notify not in user.roles:
+			await client.add_roles(user, notify)
 
 #client.loop.create_task(my_background_task())
 

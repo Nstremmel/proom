@@ -276,7 +276,6 @@ async def on_message(message):
 			await client.send_message(message.channel, '**Sorry**, it was actually __**{}**__.'.format(answer))
 	#############################################
 	elif message.content.startswith("!start unscramble"):
-		await client.send_message(message.channel, "The first person to type the unscrambled version of this word wins!")
 		word=str(open("words.csv").readlines()[random.randint(0,100)].splitlines()[0])
 		characters=[]
 		characters+=word
@@ -285,11 +284,14 @@ async def on_message(message):
 			letter=random.randint(0, (len(characters)-1))
 			scrambled+=str(characters[letter])
 			characters.remove(str(characters[letter]))
-		await client.send_message(message.channel, "The word is:   "+str(scrambled))
+		embed = discord.Embed(description="The first person to type the unscrambled version of this word wins!\n\nScrambled Word: **"+str(scrambled)+"**", color=8270499)
+		embed.set_author(name="Word Unscramble Game", icon_url=str(message.server.icon_url))
+		embed.set_footer(text="Use !skipword for the answer.")
+		await client.send_message(message.channel, embed=embed)
 	#########################################
 	elif (str(message.content)).lower()==str(word):
 		word="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs"
-		await client.send_message(message.channel, str(message.author)+" has succesfully unscrambled the word!")
+		await client.send_message(message.channel, "<@"+str(message.author.id)+"> has succesfully unscrambled the word!")
 	########################################
 	elif message.content.startswith("!skipword"):
 		if word!="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs":

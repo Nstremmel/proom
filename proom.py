@@ -117,6 +117,7 @@ async def my_background_task():
 	global people
 	await client.wait_until_ready()
 	while not client.is_closed:
+		channel = discord.Object(id='559182863828910090')
 		# client1 = gspread.authorize(creds)
 		# sheet = client1.open("Points System").sheet1
 		# sheet.update_cell(27,27,"Authenticated")
@@ -295,7 +296,7 @@ async def on_message(message):
 	########################################
 	elif message.content.startswith("!skipword"):
 		if word!="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs":
-			await client.send_message(message.channel, "Too difficult for you? The word was "+str(word)+".")
+			await client.send_message(message.channel, "Too difficult for you? The word was: **"+str(word)+"**.")
 			word="skdfjgslddddfgggsdflkgashdflkjhesrflskjerhfs;eroifaasdfalwkefjhs"
 		else:
 			await client.send_message(message.channel, "There is no word right now. Use \"!start unscramble\" to play.")
@@ -471,7 +472,7 @@ async def on_message(message):
 			else:
 				amount=formatfromk(amount)
 				await client.send_message(message.server.get_channel("514771727818031104"), "<@"+str(message.author.id)+"> Has made a donation request of "+amount+".")
-				await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+amount+". A rank will message you soon to collect your donation.")
+				await client.send_message(message.channel, "<@"+str(message.author.id)+">, You have made a donation request of "+amount+". An owner or admin will message you soon to collect your donation.")
 		except:
 			await client.send_message(message.channel, "An **error** has occured. Make sure you use `!donate (AMOUNT OF 07 GP)` - No parenthesis")
 	##############################
@@ -666,12 +667,53 @@ async def on_message(message):
 			await client.send_message(message.channel, embed=embed)
 		else:
 			await client.send_message(message.channel, "Only staff can update the community chest.")
-	#####################################
-	elif message.content.startswith("!giveroles"):
-		notify=get(reaction.message.server.roles, name='Notify')
-		if notify not in user.roles:
-			await client.add_roles(user, notify)
+	# #####################################
+	# elif message.content.startswith("!gstart"):
+	# 	try:
+	# 		satisfied=True
+	# 		index=len(rewards)
+	# 		reward=' '.join((message.content).split(" ")[3:]).title()
 
+	# 		if ((message.content).split(" ")[1][-1:]).lower()=="s":
+	# 			if int((message.content).split(" ")[1][:-1])<10:
+	# 				await client.send_message(message.channel, "The giveaway must last for at least 10 seconds.")
+	# 				satisfied=False
+	# 			else:
+	# 				time=int(message.content).split(" ")[1][:-1]
+	# 		elif ((message.content).split(" ")[1][-1:]).lower()=="m":
+	# 			time=int((message.content).split(" ")[1][:-1])*60
+	# 		elif ((message.content).split(" ")[1][-1:]).lower()=="h":
+	# 			time=int((message.content).split(" ")[1][:-1])*3600
+	# 		elif ((message.content).split(" ")[1][-1:]).lower()=="d":
+	# 			time=int((message.content).split(" ")[1][:-1])*86400
+	# 		else:
+	# 			if int((message.content).split(" ")[1])<10:
+	# 				await client.send_message(message.channel, "The giveaway must last for at least 10 seconds.")
+	# 				satisfied=False
+	# 			else:
+	# 				time=int((message.content).split(" ")[1])
+			
+	# 		if ((message.content).split(" ")[2][-1:]).lower()=="w":
+	# 			winner=int((message.content).split(" ")[2][:-1])
+	# 		else:
+	# 			winner=int((message.content).split(" ")[2])
+
+	# 		if satisfied==True:
+	# 			embed=discord.Embed(description="React with :tada: to enter the giveaway!\n\nLength of giveaway: **"+(message.content).split(" ")[1]+"**\n"+
+	# 																						"Number of winners: **"+str(winner)+"**", color=15152185)
+	# 			embed.set_author(name="Prize: "+str(reward), icon_url=str(message.server.icon_url))
+	# 			embed.set_footer(text="Started on: "+str(datetime.datetime.now())[:-7])
+	# 			message=await client.send_message(message.channel, embed=embed)
+	# 			await client.add_reaction(message,"🎉")
+
+	# 			giveaways[message]=index
+	# 			winners.append(winner)
+	# 			rewards.append(reward)
+	# 			times.append(time)
+	# 			participants.append([])
+	# 	except:
+	# 		await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!gstart (Time) (Amount of Winners) (Item)`.")
+	# ##############################
 #client.loop.create_task(my_background_task())
 
 Bot_Token = os.environ['TOKEN']

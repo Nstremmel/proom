@@ -111,37 +111,84 @@ day=int(datetime.datetime.today().day)
 bananamode=False
 
 
+giveaways={}
+participants=[]
+winners=[]
+rewards=[]
+times=[]
 
+# async def my_background_task():
+# 	global people
+# 	await client.wait_until_ready()
+# 	while not client.is_closed:
+# 		channel = discord.Object(id='559182863828910090')
+# 		# client1 = gspread.authorize(creds)
+# 		# sheet = client1.open("Points System").sheet1
+# 		# sheet.update_cell(27,27,"Authenticated")
+# 		# print("authenticated")
+# 		c.execute("SELECT day FROM giveaway WHERE gnumber=1")
+# 		day=int(c.fetchone()[0])
+# 		print(day)
+# 		if day!=int(datetime.datetime.today().day):
+# 			c.execute("SELECT people FROM giveaway WHERE gnumber=1")
+# 			people=str(c.fetchone()[0]).split("\n")
+# 			embed = discord.Embed(description=random.choice(people)+" has won today's giveaway! DM <@199630284906430465> to claim your **1m**!", color=16724736)
+# 			embed.set_author(name="Daily Holiday Giveaway", icon_url=str(member.avatar_url))
+# 			embed.set_footer(text="Provided by Scandal, Poet, Victarion, and Partners ;)")
+# 			await client.send_message(client.get_channel("510329148003319818"), embed=embed)
+
+# 			client1 = gspread.authorize(creds)
+# 			sheet = client1.open("Party Room Donations").sheet1
+# 			for counter, i in enumerate(people):
+# 				sheet.update_cell(1+counter, 11+day, str(i))
+
+# 			c.execute("UPDATE giveaway SET people='{}' WHERE gnumber=1".format(""))
+# 		c.execute("UPDATE giveaway SET day='{}' WHERE gnumber=1".format(int(datetime.datetime.today().day)))
+# 		conn.commit()
+# 		await asyncio.sleep(3600)
 
 async def my_background_task():
-	global people
+	global giveaways,times,participants,winners,rewards
 	await client.wait_until_ready()
 	while not client.is_closed:
-		channel = discord.Object(id='559182863828910090')
-		# client1 = gspread.authorize(creds)
-		# sheet = client1.open("Points System").sheet1
-		# sheet.update_cell(27,27,"Authenticated")
-		# print("authenticated")
-		c.execute("SELECT day FROM giveaway WHERE gnumber=1")
-		day=int(c.fetchone()[0])
-		print(day)
-		if day!=int(datetime.datetime.today().day):
-			c.execute("SELECT people FROM giveaway WHERE gnumber=1")
-			people=str(c.fetchone()[0]).split("\n")
-			embed = discord.Embed(description=random.choice(people)+" has won today's giveaway! DM <@199630284906430465> to claim your **1m**!", color=16724736)
-			embed.set_author(name="Daily Holiday Giveaway", icon_url=str(member.avatar_url))
-			embed.set_footer(text="Provided by Scandal, Poet, Victarion, and Partners ;)")
-			await client.send_message(client.get_channel("510329148003319818"), embed=embed)
+		if len(giveaways)!=0: #checks if any giveaways are going on
+			delete=False
+			for i in giveaways:
+				index=giveaways[i]
+				times[index]=times[index]-10 #decreases the amount of time by 10 seconds
+				if times[index]<=0: #checks if time is below 0
+					if len(participants[index])==0: #runs if nobody enters
+						embed=discord.Embed(description="Nobody has entered this giveaway. Giveaway ended with no winner.")
+						embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/457004723158122498/466268822735683584/00c208fecf617c79a3f719f1a9d9c9e8.png")
+						embed.set_footer(text="Ended on: "+str(datetime.datetime.now())[:-7])
+					else:
+						chosenones=""
+						for x in range(winners[index]): #picks winners
+							if len(participants[index])==0:
+								break
+							chosenone=random.choice(participants[index])
+							chosenones+=("<@"+chosenone+">\n")
+							participants[index].remove(chosenone)
 
-			client1 = gspread.authorize(creds)
-			sheet = client1.open("Party Room Donations").sheet1
-			for counter, i in enumerate(people):
-				sheet.update_cell(1+counter, 11+day, str(i))
+						embed=discord.Embed(description="The winner(s) of the giveaway is/are:\n"+chosenones)
+						embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/457004723158122498/466268822735683584/00c208fecf617c79a3f719f1a9d9c9e8.png")
+						embed.set_footer(text="Winner Chosen on: "+str(datetime.datetime.now())[:-7])
+					delete=True
+				else:
+					embed=discord.Embed(description="React with :tada: to enter the giveaway!\n\nLength of giveaway: **"+str(times[index])+" seconds**\n"+
+																						"Number of winners: **"+str(winners[index])+"**", color=15152185)
+					embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/457004723158122498/466268822735683584/00c208fecf617c79a3f719f1a9d9c9e8.png")
+				await client.edit_message(i, embed=embed)
+			if delete==True:
+				del participants[index]
+				del winners[index]
+				del rewards[index]
+				del times[index]
+				del giveaways[i]
+		else:
+			None
+		await asyncio.sleep(10)
 
-			c.execute("UPDATE giveaway SET people='{}' WHERE gnumber=1".format(""))
-		c.execute("UPDATE giveaway SET day='{}' WHERE gnumber=1".format(int(datetime.datetime.today().day)))
-		conn.commit()
-		await asyncio.sleep(3600)
 
 
 @client.event
@@ -150,6 +197,16 @@ async def on_ready():
 
 @client.event
 async def on_reaction_add(reaction, user):
+	global giveaways,participants
+	if len(giveaways)!=0:
+		for i in giveaways:
+			if i.id==reaction.message.id:
+				if reaction.emoji=="🎉":
+					index=giveaways[i]
+					if user.id not in participants[index]:
+						if str(user.id)!="466066936443174932":
+							participants[index].append(str(user.id))
+
 	print(str(reaction.message.channel.id))
 	print(str(reaction.message.id))
 	if str(reaction.message.channel.id)=="559449631604342824" and str(reaction.message.id)=="560301934385430558":
@@ -180,6 +237,15 @@ async def on_reaction_add(reaction, user):
 
 @client.event
 async def on_reaction_remove(reaction, user):
+	global giveaways,participants
+	if len(giveaways)!=0:
+		for i in giveaways:
+			if i.id==reaction.message.id:
+				if reaction.emoji=="🎉":
+					index=giveaways[i]
+					if user.id in participants[index]:
+						participants[index].remove(str(user.id))
+
 	if str(reaction.message.channel.id)=="559449631604342824" and str(reaction.message.id)=="560301934385430558":
 		if str(reaction.emoji)=="❗":
 			notify=get(reaction.message.server.roles, name='Notify')
@@ -206,7 +272,7 @@ async def on_reaction_remove(reaction, user):
 
 @client.event
 async def on_message(message):
-	global word,guesses,solved,blank,wrong,word1,people
+	global word,guesses,solved,blank,wrong,word1,people,giveaways,participants,winners,rewards
 
 	if "ram ranch" in (message.content).lower():
 		if str(message.author.id)!="426579751583481857":
@@ -668,53 +734,61 @@ async def on_message(message):
 		else:
 			await client.send_message(message.channel, "Only staff can update the community chest.")
 	# #####################################
-	# elif message.content.startswith("!gstart"):
-	# 	try:
-	# 		satisfied=True
-	# 		index=len(rewards)
-	# 		reward=' '.join((message.content).split(" ")[3:]).title()
+	elif message.content.startswith("!gstart"):
+		try:
+			satisfied=True
+			index=len(rewards)
+			reward=' '.join((message.content).split(" ")[3:]).title()
 
-	# 		if ((message.content).split(" ")[1][-1:]).lower()=="s":
-	# 			if int((message.content).split(" ")[1][:-1])<10:
-	# 				await client.send_message(message.channel, "The giveaway must last for at least 10 seconds.")
-	# 				satisfied=False
-	# 			else:
-	# 				time=int(message.content).split(" ")[1][:-1]
-	# 		elif ((message.content).split(" ")[1][-1:]).lower()=="m":
-	# 			time=int((message.content).split(" ")[1][:-1])*60
-	# 		elif ((message.content).split(" ")[1][-1:]).lower()=="h":
-	# 			time=int((message.content).split(" ")[1][:-1])*3600
-	# 		elif ((message.content).split(" ")[1][-1:]).lower()=="d":
-	# 			time=int((message.content).split(" ")[1][:-1])*86400
-	# 		else:
-	# 			if int((message.content).split(" ")[1])<10:
-	# 				await client.send_message(message.channel, "The giveaway must last for at least 10 seconds.")
-	# 				satisfied=False
-	# 			else:
-	# 				time=int((message.content).split(" ")[1])
+			if ((message.content).split(" ")[1][-1:]).lower()=="s":
+				if int((message.content).split(" ")[1][:-1])<10:
+					await client.send_message(message.channel, "The giveaway must last for at least 10 seconds.")
+					satisfied=False
+				else:
+					time=int(message.content).split(" ")[1][:-1]
+			elif ((message.content).split(" ")[1][-1:]).lower()=="m":
+				time=int((message.content).split(" ")[1][:-1])*60
+			elif ((message.content).split(" ")[1][-1:]).lower()=="h":
+				time=int((message.content).split(" ")[1][:-1])*3600
+			elif ((message.content).split(" ")[1][-1:]).lower()=="d":
+				time=int((message.content).split(" ")[1][:-1])*86400
+			else:
+				if int((message.content).split(" ")[1])<10:
+					await client.send_message(message.channel, "The giveaway must last for at least 10 seconds.")
+					satisfied=False
+				else:
+					time=int((message.content).split(" ")[1])
 			
-	# 		if ((message.content).split(" ")[2][-1:]).lower()=="w":
-	# 			winner=int((message.content).split(" ")[2][:-1])
-	# 		else:
-	# 			winner=int((message.content).split(" ")[2])
+			if ((message.content).split(" ")[2][-1:]).lower()=="w":
+				winner=int((message.content).split(" ")[2][:-1])
+			else:
+				winner=int((message.content).split(" ")[2])
 
-	# 		if satisfied==True:
-	# 			embed=discord.Embed(description="React with :tada: to enter the giveaway!\n\nLength of giveaway: **"+(message.content).split(" ")[1]+"**\n"+
-	# 																						"Number of winners: **"+str(winner)+"**", color=15152185)
-	# 			embed.set_author(name="Prize: "+str(reward), icon_url=str(message.server.icon_url))
-	# 			embed.set_footer(text="Started on: "+str(datetime.datetime.now())[:-7])
-	# 			message=await client.send_message(message.channel, embed=embed)
-	# 			await client.add_reaction(message,"🎉")
+			if satisfied==True:
+				embed=discord.Embed(description="React with :tada: to enter the giveaway!\n\nLength of giveaway: **"+(message.content).split(" ")[1]+"**\n"+
+																							"Number of winners: **"+str(winner)+"**", color=15152185)
+				embed.set_author(name="Prize: "+str(reward), icon_url="https://cdn.discordapp.com/attachments/457004723158122498/466268822735683584/00c208fecf617c79a3f719f1a9d9c9e8.png")
+				embed.set_footer(text="Started on: "+str(datetime.datetime.now())[:-7])
+				message=await client.send_message(message.channel, embed=embed)
+				await client.add_reaction(message,"🎉")
 
-	# 			giveaways[message]=index
-	# 			winners.append(winner)
-	# 			rewards.append(reward)
-	# 			times.append(time)
-	# 			participants.append([])
-	# 	except:
-	# 		await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!gstart (Time) (Amount of Winners) (Item)`.")
-	# ##############################
-#client.loop.create_task(my_background_task())
+				giveaways[message]=index
+				winners.append(winner)
+				rewards.append(reward)
+				times.append(time)
+				participants.append([])
+		except:
+			await client.send_message(message.channel, "An **error** has occurred. Make sure you use `!gstart (Time) (Amount of Winners) (Item)`.")
+	####################################
+	elif message.content.startswith("!gend"):
+		for i in giveaways:
+			if str(i.id)==(message.content).split(" ")[1]:
+				index=giveaways[i]
+				times[index]=0
+				await my_background_task()
+
+
+client.loop.create_task(my_background_task())
 
 Bot_Token = os.environ['TOKEN']
 client.run(str(Bot_Token))

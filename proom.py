@@ -159,7 +159,7 @@ async def my_background_task():
 				if times[index]<=0: #checks if time is below 0
 					if len(participants[index])==0: #runs if nobody enters
 						embed=discord.Embed(description="Nobody has entered this giveaway. Giveaway ended with no winner.")
-						embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/457004723158122498/466268822735683584/00c208fecf617c79a3f719f1a9d9c9e8.png")
+						embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/512038295451205652/515697226618765332/proom1.png")
 						embed.set_footer(text="Ended on: "+str(datetime.datetime.now())[:-7])
 					else:
 						chosenones=""
@@ -171,13 +171,13 @@ async def my_background_task():
 							participants[index].remove(chosenone)
 
 						embed=discord.Embed(description="The winner(s) of the giveaway is/are:\n"+chosenones)
-						embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/457004723158122498/466268822735683584/00c208fecf617c79a3f719f1a9d9c9e8.png")
+						embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/512038295451205652/515697226618765332/proom1.png")
 						embed.set_footer(text="Winner Chosen on: "+str(datetime.datetime.now())[:-7])
 					delete=True
 				else:
 					embed=discord.Embed(description="React with :tada: to enter the giveaway!\n\nLength of giveaway: **"+str(times[index])+" seconds**\n"+
 																						"Number of winners: **"+str(winners[index])+"**", color=15152185)
-					embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/457004723158122498/466268822735683584/00c208fecf617c79a3f719f1a9d9c9e8.png")
+					embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/512038295451205652/515697226618765332/proom1.png")
 				await client.edit_message(i, embed=embed)
 			if delete==True:
 				del participants[index]
@@ -767,7 +767,7 @@ async def on_message(message):
 			if satisfied==True:
 				embed=discord.Embed(description="React with :tada: to enter the giveaway!\n\nLength of giveaway: **"+(message.content).split(" ")[1]+"**\n"+
 																							"Number of winners: **"+str(winner)+"**", color=15152185)
-				embed.set_author(name="Prize: "+str(reward), icon_url="https://cdn.discordapp.com/attachments/457004723158122498/466268822735683584/00c208fecf617c79a3f719f1a9d9c9e8.png")
+				embed.set_author(name="Prize: "+str(reward), icon_url="https://cdn.discordapp.com/attachments/512038295451205652/515697226618765332/proom1.png")
 				embed.set_footer(text="Started on: "+str(datetime.datetime.now())[:-7])
 				message=await client.send_message(message.channel, embed=embed)
 				await client.add_reaction(message,"🎉")

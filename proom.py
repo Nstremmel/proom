@@ -175,7 +175,10 @@ async def my_background_task():
 						embed.set_footer(text="Winner Chosen on: "+str(datetime.datetime.now())[:-7])
 					delete=True
 				else:
-					embed=discord.Embed(description="React with :tada: to enter the giveaway!\n\nLength of giveaway: **"+str(times[index])+" seconds**\n"+
+					seconds=datetime.timedelta(seconds=times[index])
+					d=datetime.datetime(1,1,1) + seconds
+					printtime=("**%d** Days, **%d** Hours, **%d** Minutes, **%d** Seconds" % (d.day-1, d.hour, d.minute, d.second))
+					embed=discord.Embed(description="React with :tada: to enter the giveaway!\n\nLength of giveaway: "+str(printtime)+"\n"+
 																						"Number of winners: **"+str(winners[index])+"**", color=15152185)
 					embed.set_author(name="Prize: "+str(rewards[index]), icon_url="https://cdn.discordapp.com/attachments/512038295451205652/515697226618765332/proom1.png")
 				await client.edit_message(i, embed=embed)
